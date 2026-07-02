@@ -120,3 +120,7 @@ Cookin is not intended to be:
 - A blogging platform
 - A public recipe sharing website
 - A CMS
+
+## Additional Features
+### 1
+Clicking ingredient makes all other references in instructions subtly glow
