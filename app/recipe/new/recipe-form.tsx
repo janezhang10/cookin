@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 
+import {
+  createIngredientToken,
+  renameIngredientTokens,
+} from "@/lib/markdown/ingredientTokens";
 import { createRecipeAction } from "@/lib/recipe/actions";
 
 interface UnitOption {
@@ -42,16 +46,35 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
   const [steps, setSteps] = useState<StepRow[]>([emptyStep(0)]);
   const nextIngredientId = useRef(1);
   const nextStepId = useRef(1);
-  const [state, formAction, pending] = useActionState(
-    createRecipeAction,
-    { errors: [] },
-  );
+  const ingredientReferenceNames = useRef<Record<number, string>>({});
+  const stepTextareas = useRef<Record<number, HTMLTextAreaElement | null>>({});
+  const [state, formAction, pending] = useActionState(createRecipeAction, {
+    errors: [],
+  });
 
   function updateIngredient(
     id: number,
     field: keyof Omit<IngredientRow, "id">,
     value: string,
   ) {
+    if (field === "ingredient") {
+      const currentName =
+        ingredients.find((ingredient) => ingredient.id === id)?.ingredient ??
+        "";
+      const referenceName =
+        ingredientReferenceNames.current[id] ?? currentName;
+
+      if (value.trim()) {
+        setSteps((currentSteps) =>
+          currentSteps.map((step) => ({
+            ...step,
+            text: renameIngredientTokens(step.text, referenceName, value),
+          })),
+        );
+        ingredientReferenceNames.current[id] = value;
+      }
+    }
+
     setIngredients((rows) =>
       rows.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
     );
@@ -61,6 +84,31 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
     setSteps((rows) =>
       rows.map((row) => (row.id === id ? { ...row, text } : row)),
     );
+  }
+
+  function insertIngredient(step: StepRow, ingredient: IngredientRow) {
+    const textarea = stepTextareas.current[step.id];
+    const start = textarea?.selectionStart ?? step.text.length;
+    const end = textarea?.selectionEnd ?? start;
+    const before = step.text.slice(0, start);
+    const after = step.text.slice(end);
+    const leadingSpace = before.length > 0 && !/\s$/.test(before) ? " " : "";
+    const trailingSpace =
+      after.length === 0 || (!/^\s/.test(after) && !/^[.,!?;:]/.test(after))
+        ? " "
+        : "";
+    const insertion = `${leadingSpace}${createIngredientToken(
+      ingredient.ingredient,
+    )}${trailingSpace}`;
+    const cursor = start + insertion.length;
+
+    updateStep(step.id, `${before}${insertion}${after}`);
+
+    requestAnimationFrame(() => {
+      const currentTextarea = stepTextareas.current[step.id];
+      currentTextarea?.focus();
+      currentTextarea?.setSelectionRange(cursor, cursor);
+    });
   }
 
   return (
@@ -199,9 +247,12 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
               </label>
               <textarea
                 id={`step-${step.id}`}
+                ref={(textarea) => {
+                  stepTextareas.current[step.id] = textarea;
+                }}
                 value={step.text}
                 rows={3}
-                placeholder="Heat the butter..."
+                placeholder="Heat the pan, then add..."
                 aria-required="true"
                 onChange={(event) => updateStep(step.id, event.target.value)}
               />
@@ -218,6 +269,20 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
               >
                 ×
               </button>
+              <div className="ingredient-reference-picker">
+                <span>Insert ingredient:</span>
+                {ingredients
+                  .filter(({ ingredient }) => ingredient.trim())
+                  .map((ingredient) => (
+                    <button
+                      key={ingredient.id}
+                      type="button"
+                      onClick={() => insertIngredient(step, ingredient)}
+                    >
+                      + {ingredient.ingredient.trim()}
+                    </button>
+                  ))}
+              </div>
             </li>
           ))}
         </ol>

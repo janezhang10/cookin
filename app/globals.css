@@ -67,10 +67,9 @@ a {
 }
 
 .search {
+  flex: 1;
   width: 100%;
   max-width: 520px;
-
-  margin-top: 2rem;
 
   padding: 0.9rem 1rem;
 
@@ -82,8 +81,31 @@ a {
   font-size: 1rem;
 }
 
-.search:disabled {
-  opacity: 0.6;
+.search:focus {
+  outline: 3px solid rgba(224, 122, 95, 0.18);
+  border-color: var(--accent);
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.search-row .button {
+  white-space: nowrap;
+}
+
+.search-status {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.search-empty-state {
+  padding: 2.5rem 2rem;
 }
 
 .recipe-list {
@@ -350,6 +372,37 @@ a {
   align-items: start;
 }
 
+.ingredient-reference-picker {
+  grid-column: 2 / 3;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.ingredient-reference-picker button {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-hover);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.ingredient-reference-picker button:hover {
+  border-color: #d8b2a7;
+  background: #fff8f6;
+}
+
+.ingredient-reference-picker button:focus-visible {
+  outline: 3px solid rgba(224, 122, 95, 0.22);
+  outline-offset: 2px;
+}
+
 .step-number {
   display: grid;
   place-items: center;
@@ -500,6 +553,21 @@ a {
   line-height: 1.65;
 }
 
+.instruction-text {
+  white-space: pre-wrap;
+}
+
+.ingredient-reference {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.42rem;
+  border-radius: 999px;
+  background: #f3e8e4;
+  color: #8e4937;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .container {
     padding: 3rem 1rem;
@@ -530,5 +598,14 @@ a {
   .recipe-panel-heading {
     align-items: start;
     flex-direction: column;
+  }
+
+  .search-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search {
+    max-width: none;
   }
 }

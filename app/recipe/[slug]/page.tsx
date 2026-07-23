@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { getRecipeBySlug } from "@/lib/recipe/get";
 
-import { ScaledIngredients } from "./scaled-ingredients";
+import { RecipeContent } from "./recipe-content";
 
 export default async function RecipePage({
   params,
@@ -27,25 +27,18 @@ export default async function RecipePage({
         <h1>{recipe.title}</h1>
       </header>
 
-      <div className="recipe-content">
-        <ScaledIngredients
-          ingredients={recipe.ingredients.map((item) => ({
-            id: item.id,
-            quantity: item.quantity,
-            unitAbbreviation: item.unit?.abbreviation ?? null,
-            name: item.ingredient.name,
-          }))}
-        />
-
-        <section className="recipe-panel">
-          <h2>Instructions</h2>
-          <ol className="instruction-list">
-            {recipe.steps.map((step) => (
-              <li key={step.id}>{step.markdown}</li>
-            ))}
-          </ol>
-        </section>
-      </div>
+      <RecipeContent
+        ingredients={recipe.ingredients.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          unitAbbreviation: item.unit?.abbreviation ?? null,
+          name: item.ingredient.name,
+        }))}
+        steps={recipe.steps.map((step) => ({
+          id: step.id,
+          markdown: step.markdown,
+        }))}
+      />
     </main>
   );
 }
