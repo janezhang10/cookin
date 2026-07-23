@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { getRecipeBySlug } from "@/lib/recipe/get";
 
+import { RecipeActions } from "./recipe-actions";
 import { RecipeContent } from "./recipe-content";
 
 export default async function RecipePage({
@@ -23,8 +24,13 @@ export default async function RecipePage({
         ← All recipes
       </Link>
 
-      <header className="page-header">
+      <header className="page-header recipe-title-row">
         <h1>{recipe.title}</h1>
+        <RecipeActions
+          recipeId={recipe.id}
+          slug={recipe.slug}
+          title={recipe.title}
+        />
       </header>
 
       <RecipeContent

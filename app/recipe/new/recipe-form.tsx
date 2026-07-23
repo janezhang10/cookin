@@ -7,7 +7,7 @@ import {
   createIngredientToken,
   renameIngredientTokens,
 } from "@/lib/markdown/ingredientTokens";
-import { createRecipeAction } from "@/lib/recipe/actions";
+import { createRecipeAction, updateRecipeAction } from "@/lib/recipe/actions";
 
 interface UnitOption {
   id: string;
@@ -27,6 +27,20 @@ interface StepRow {
   text: string;
 }
 
+export interface RecipeFormInitialData {
+  id: string;
+  slug: string;
+  title: string;
+  ingredients: Array<{
+    quantity: number | null;
+    unitId: string | null;
+    ingredient: string;
+  }>;
+  steps: Array<{
+    text: string;
+  }>;
+}
+
 const emptyIngredient = (id: number): IngredientRow => ({
   id,
   quantity: "",
@@ -39,16 +53,43 @@ const emptyStep = (id: number): StepRow => ({
   text: "",
 });
 
-export function RecipeForm({ units }: { units: UnitOption[] }) {
-  const [ingredients, setIngredients] = useState<IngredientRow[]>([
-    emptyIngredient(0),
-  ]);
-  const [steps, setSteps] = useState<StepRow[]>([emptyStep(0)]);
-  const nextIngredientId = useRef(1);
-  const nextStepId = useRef(1);
-  const ingredientReferenceNames = useRef<Record<number, string>>({});
+export function RecipeForm({
+  units,
+  initialRecipe,
+}: {
+  units: UnitOption[];
+  initialRecipe?: RecipeFormInitialData;
+}) {
+  const initialIngredients = initialRecipe?.ingredients.map(
+    (ingredient, index) => ({
+      id: index,
+      quantity: ingredient.quantity === null ? "" : String(ingredient.quantity),
+      unitId: ingredient.unitId ?? "",
+      ingredient: ingredient.ingredient,
+    }),
+  ) ?? [emptyIngredient(0)];
+  const initialSteps = initialRecipe?.steps.map((step, index) => ({
+    id: index,
+    text: step.text,
+  })) ?? [emptyStep(0)];
+  const [ingredients, setIngredients] =
+    useState<IngredientRow[]>(initialIngredients);
+  const [steps, setSteps] = useState<StepRow[]>(initialSteps);
+  const nextIngredientId = useRef(initialIngredients.length);
+  const nextStepId = useRef(initialSteps.length);
+  const ingredientReferenceNames = useRef<Record<number, string>>(
+    Object.fromEntries(
+      initialIngredients.map((ingredient) => [
+        ingredient.id,
+        ingredient.ingredient,
+      ]),
+    ),
+  );
   const stepTextareas = useRef<Record<number, HTMLTextAreaElement | null>>({});
-  const [state, formAction, pending] = useActionState(createRecipeAction, {
+  const recipeAction = initialRecipe
+    ? updateRecipeAction.bind(null, initialRecipe.id, initialRecipe.slug)
+    : createRecipeAction;
+  const [state, formAction, pending] = useActionState(recipeAction, {
     errors: [],
   });
 
@@ -61,8 +102,7 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
       const currentName =
         ingredients.find((ingredient) => ingredient.id === id)?.ingredient ??
         "";
-      const referenceName =
-        ingredientReferenceNames.current[id] ?? currentName;
+      const referenceName = ingredientReferenceNames.current[id] ?? currentName;
 
       if (value.trim()) {
         setSteps((currentSteps) =>
@@ -121,6 +161,7 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
           type="text"
           maxLength={200}
           placeholder="Chicken Parmesan"
+          defaultValue={initialRecipe?.title}
           required
           autoFocus
         />
@@ -317,11 +358,20 @@ export function RecipeForm({ units }: { units: UnitOption[] }) {
       )}
 
       <div className="form-actions">
-        <Link href="/" className="text-button">
+        <Link
+          href={initialRecipe ? `/recipe/${initialRecipe.slug}` : "/"}
+          className="text-button"
+        >
           Cancel
         </Link>
         <button className="button" type="submit" disabled={pending}>
-          {pending ? "Creating…" : "Create recipe"}
+          {pending
+            ? initialRecipe
+              ? "Saving…"
+              : "Creating…"
+            : initialRecipe
+              ? "Save changes"
+              : "Create recipe"}
         </button>
       </div>
     </form>

@@ -4,9 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createRecipe } from "@/lib/recipe/create";
+import { deleteRecipe } from "@/lib/recipe/delete";
+import { updateRecipe } from "@/lib/recipe/update";
 import { createRecipeSchema } from "@/lib/validation/recipe";
 
-export interface CreateRecipeActionState {
+export interface RecipeActionState {
   errors: string[];
 }
 
@@ -24,10 +26,7 @@ function parseRows(value: FormDataEntryValue | null, field: string) {
   return parsed;
 }
 
-export async function createRecipeAction(
-  _previousState: CreateRecipeActionState,
-  formData: FormData,
-): Promise<CreateRecipeActionState> {
+function parseRecipeForm(formData: FormData) {
   let ingredients: unknown[];
   let steps: unknown[];
 
@@ -51,6 +50,7 @@ export async function createRecipeAction(
     });
   } catch {
     return {
+      success: false as const,
       errors: ["The recipe form could not be read. Please try again."],
     };
   }
@@ -63,8 +63,25 @@ export async function createRecipeAction(
 
   if (!parsed.success) {
     return {
+      success: false as const,
       errors: parsed.error.issues.map((issue) => issue.message),
     };
+  }
+
+  return {
+    success: true as const,
+    data: parsed.data,
+  };
+}
+
+export async function createRecipeAction(
+  _previousState: RecipeActionState,
+  formData: FormData,
+): Promise<RecipeActionState> {
+  const parsed = parseRecipeForm(formData);
+
+  if (!parsed.success) {
+    return { errors: parsed.errors };
   }
 
   let recipe;
@@ -79,4 +96,42 @@ export async function createRecipeAction(
 
   revalidatePath("/");
   redirect(`/recipe/${recipe.slug}`);
+}
+
+export async function updateRecipeAction(
+  recipeId: string,
+  previousSlug: string,
+  _previousState: RecipeActionState,
+  formData: FormData,
+): Promise<RecipeActionState> {
+  const parsed = parseRecipeForm(formData);
+
+  if (!parsed.success) {
+    return { errors: parsed.errors };
+  }
+
+  let recipe;
+
+  try {
+    recipe = await updateRecipe(recipeId, parsed.data);
+  } catch {
+    return {
+      errors: ["The recipe could not be updated. Please try again."],
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath(`/recipe/${previousSlug}`);
+  revalidatePath(`/recipe/${recipe.slug}`);
+  redirect(`/recipe/${recipe.slug}`);
+}
+
+export async function deleteRecipeAction(
+  recipeId: string,
+  _formData: FormData,
+) {
+  void _formData;
+  await deleteRecipe(recipeId);
+  revalidatePath("/");
+  redirect("/");
 }

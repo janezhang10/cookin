@@ -11,7 +11,10 @@ function slugify(title: string): string {
   return slug || "recipe";
 }
 
-export async function generateSlug(title: string): Promise<string> {
+export async function generateSlug(
+  title: string,
+  existingRecipeId?: string,
+): Promise<string> {
   const base = slugify(title);
 
   let slug = base;
@@ -23,7 +26,7 @@ export async function generateSlug(title: string): Promise<string> {
       select: { id: true },
     });
 
-    if (!exists) {
+    if (!exists || exists.id === existingRecipeId) {
       return slug;
     }
 
