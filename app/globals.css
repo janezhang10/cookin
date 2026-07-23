@@ -412,6 +412,60 @@ a {
   box-shadow: var(--shadow);
 }
 
+.recipe-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.scale-control {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.scale-options {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+}
+
+.scale-option {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.scale-option:hover {
+  color: var(--text);
+}
+
+.scale-option[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--accent-hover);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.scale-option:focus-visible {
+  outline: 3px solid rgba(224, 122, 95, 0.22);
+  outline-offset: 2px;
+}
+
 .ingredient-list,
 .instruction-list {
   margin: 1.25rem 0 0;
@@ -471,5 +525,10 @@ a {
   .ingredient-row .remove-button {
     grid-column: 3;
     grid-row: 1 / 3;
+  }
+
+  .recipe-panel-heading {
+    align-items: start;
+    flex-direction: column;
   }
 }

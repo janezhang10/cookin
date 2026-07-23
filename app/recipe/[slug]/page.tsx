@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { getRecipeBySlug } from "@/lib/recipe/get";
 
+import { ScaledIngredients } from "./scaled-ingredients";
+
 export default async function RecipePage({
   params,
 }: {
@@ -26,22 +28,14 @@ export default async function RecipePage({
       </header>
 
       <div className="recipe-content">
-        <section className="recipe-panel">
-          <h2>Ingredients</h2>
-          <ul className="ingredient-list">
-            {recipe.ingredients.map((item) => (
-              <li key={item.id}>
-                <span className="ingredient-amount">
-                  {item.quantity ?? ""}
-                  {item.quantity !== null && item.unit
-                    ? ` ${item.unit.abbreviation}`
-                    : ""}
-                </span>
-                <span>{item.ingredient.name}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <ScaledIngredients
+          ingredients={recipe.ingredients.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+            unitAbbreviation: item.unit?.abbreviation ?? null,
+            name: item.ingredient.name,
+          }))}
+        />
 
         <section className="recipe-panel">
           <h2>Instructions</h2>
