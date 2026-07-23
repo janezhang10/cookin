@@ -37,15 +37,8 @@ export default async function HomePage() {
           <ul className="recipe-list">
             {recipes.map((recipe) => (
               <li key={recipe.id}>
-                <Link
-                  href={`/recipe/${recipe.slug}`}
-                  className="recipe-card"
-                >
+                <Link href={`/recipe/${recipe.slug}`} className="recipe-card">
                   <h2>{recipe.title}</h2>
-
-                  {recipe.description && (
-                    <p>{recipe.description}</p>
-                  )}
                 </Link>
               </li>
             ))}

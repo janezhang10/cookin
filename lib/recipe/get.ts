@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db/client";
 
-export async function listRecipes() {
-    return prisma.recipe.findUnique({
-        where: { slug },
-        include: recipeInclude,
-    });
+import { recipeInclude } from "./include";
+
+export async function getRecipeBySlug(slug: string) {
+  return prisma.recipe.findUnique({
+    where: { slug },
+    include: recipeInclude,
+  });
 }

@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/db/client";
 
 function slugify(title: string): string {
-  return title
+  const slug = title
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+
+  return slug || "recipe";
 }
 
 export async function generateSlug(title: string): Promise<string> {

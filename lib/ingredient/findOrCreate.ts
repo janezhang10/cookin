@@ -1,9 +1,12 @@
-import { prisma } from "@/lib/db/client";
+import type { Prisma } from "@/app/generated/prisma/client";
 
-export async function findOrCreateIngredient(name: string) {
+export async function findOrCreateIngredient(
+  tx: Prisma.TransactionClient,
+  name: string,
+) {
   const normalized = name.trim().toLowerCase();
 
-  return prisma.ingredient.upsert({
+  return tx.ingredient.upsert({
     where: {
       normalizedName: normalized,
     },

@@ -1,13 +1,6 @@
-export interface CreateRecipeInput {
-    title: string;
-    description?: string;
-    yield?: string;
-    notes?: string;
-}
-
 export interface CreateRecipeIngredientInput {
   quantity: number | null;
-  unitId: number | null;
+  unitId: string | null;
   ingredient: string;
 }
 

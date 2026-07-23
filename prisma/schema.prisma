@@ -13,12 +13,9 @@ datasource db {
 }
 
 model Recipe {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  description String?
-  notes       String?
-  yield       String?
+  id    String @id @default(cuid())
+  title String
+  slug  String @unique
 
   ingredients RecipeIngredient[]
   steps       RecipeStep[]
@@ -30,8 +27,9 @@ model Recipe {
 }
 
 model Ingredient {
-  id   String @id @default(cuid())
-  name String @unique
+  id             String @id @default(cuid())
+  name           String
+  normalizedName String @unique
 
   recipeIngredients RecipeIngredient[]
 
@@ -61,7 +59,7 @@ model RecipeIngredient {
   ingredientId String
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
 
-  quantity Float
+  quantity Float?
 
   unitId String?
   unit   Unit? @relation(fields: [unitId], references: [id])
