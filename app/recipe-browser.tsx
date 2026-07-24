@@ -7,14 +7,23 @@ interface RecipeSummary {
   id: string;
   title: string;
   slug: string;
+  ingredients: {
+    ingredient: {
+      name: string;
+    };
+  }[];
 }
 
 export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
   const filteredRecipes = normalizedQuery
-    ? recipes.filter((recipe) =>
-        recipe.title.toLowerCase().includes(normalizedQuery),
+    ? recipes.filter(
+        (recipe) =>
+          recipe.title.toLowerCase().includes(normalizedQuery) ||
+          recipe.ingredients.some(({ ingredient }) =>
+            ingredient.name.toLowerCase().includes(normalizedQuery),
+          ),
       )
     : recipes;
 
@@ -34,7 +43,7 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               className="search"
               type="search"
               value={query}
-              placeholder="Search recipes..."
+              placeholder="Search by recipe or ingredient..."
               autoComplete="off"
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -60,7 +69,7 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
         ) : filteredRecipes.length === 0 ? (
           <div className="empty-state search-empty-state">
             <h2>No matching recipes</h2>
-            <p>Try a different title.</p>
+            <p>Try a different recipe or ingredient.</p>
             <button
               type="button"
               className="text-button"
@@ -85,6 +94,11 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
                 <li key={recipe.id}>
                   <Link href={`/recipe/${recipe.slug}`} className="recipe-card">
                     <h2>{recipe.title}</h2>
+                    <p>
+                      {recipe.ingredients
+                        .map(({ ingredient }) => ingredient.name)
+                        .join(", ")}
+                    </p>
                   </Link>
                 </li>
               ))}

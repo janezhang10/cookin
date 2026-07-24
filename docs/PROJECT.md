@@ -38,15 +38,19 @@ The application is intentionally **not** being designed as a public recipe websi
 
 ## Core Features
 
-- Browse recipes
-- Search by title
-- Search by ingredients
+Currently available:
+
+- Browse, create, edit, and delete recipes
+- Search by recipe title or ingredient
 - Ingredient-aware recipe editor
 - Markdown-enabled instructions
+- Scaled ingredient quantities
+
+Planned:
+
 - Recipe photos
 - Favorites
 - Tags
-- Serving scaling
 - Cooking mode
 - Import existing recipes
 
@@ -122,5 +126,7 @@ Cookin is not intended to be:
 - A CMS
 
 ## Additional Features
+
 ### 1
+
 Clicking ingredient makes all other references in instructions subtly glow

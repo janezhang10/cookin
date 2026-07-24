@@ -7,11 +7,12 @@ Frontend
 - Next.js
 - React
 - TypeScript
-- Tailwind CSS
+- Plain CSS
 
 Backend
 
-- Next.js Route Handlers
+- React Server Components
+- Next.js Server Actions
 
 Database
 
@@ -39,7 +40,13 @@ Access is controlled through Tailscale.
 
 ## Folder Structure
 
-(To be expanded as development progresses.)
+- `app/` — pages, interactive components, and generated Prisma client
+- `lib/recipe/` — recipe queries, mutations, scaling, and slugs
+- `lib/markdown/` — Markdown rendering and ingredient-reference tokens
+- `lib/validation/` — recipe form validation
+- `lib/db/` — Prisma client
+- `prisma/` — schema and seed data
+- `docs/` — product and technical documentation
 
 ---
 
@@ -53,8 +60,6 @@ Major entities include:
 - RecipeIngredient
 - RecipeStep
 - RecipeStepIngredientUsage
-- Tag
-- RecipeTag
-- Photo
+  Tags and photos remain planned features and are not yet in the Prisma schema.
 
 Relationships will be documented as the schema evolves.

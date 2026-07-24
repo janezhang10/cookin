@@ -2,29 +2,29 @@
 
 ## Phase 0 — Foundation
 
-- [ ] Project setup
-- [ ] Documentation
-- [ ] Next.js
+- [x] Project setup
+- [x] Documentation
+- [x] Next.js
 - [ ] Tailwind
-- [ ] Prisma
-- [ ] SQLite
-- [ ] Initial schema
+- [x] Prisma
+- [x] SQLite
+- [x] Initial schema
 
 ---
 
 ## Phase 1 — Recipe Browsing
 
-- [ ] Home page
-- [ ] Recipe list
-- [ ] Recipe details
-- [ ] Responsive layout
+- [x] Home page
+- [x] Recipe list
+- [x] Recipe details
+- [x] Responsive layout
 
 ---
 
 ## Phase 2 — Search
 
-- [ ] Search by title
-- [ ] Search by ingredient
+- [x] Search by title
+- [x] Search by ingredient
 - [ ] Multi-ingredient search
 - [ ] Tag filtering
 
@@ -32,12 +32,13 @@
 
 ## Phase 3 — Recipe Editor
 
-- [ ] Create recipe
-- [ ] Edit recipe
-- [ ] Ingredient picker
-- [ ] Ingredient usage editor
-- [ ] Markdown editor
-- [ ] Validation
+- [x] Create recipe
+- [x] Edit recipe
+- [x] Delete recipe
+- [x] Ingredient picker
+- [x] Ingredient references in instructions
+- [x] Markdown instructions
+- [x] Validation
 
 ---
 
@@ -55,7 +56,7 @@
 - [ ] Ingredient checkboxes
 - [ ] Cooking mode
 - [ ] Timers
-- [ ] Serving scaling
+- [x] Quantity scaling
 
 ---
 
