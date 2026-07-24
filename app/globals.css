@@ -573,10 +573,37 @@ a {
   list-style: none;
 }
 
-.ingredient-list li {
+.ingredient-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.5rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.ingredient-check-row {
   display: grid;
-  grid-template-columns: minmax(80px, auto) 1fr;
-  gap: 1rem;
+  grid-template-columns: 20px minmax(80px, auto) 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ingredient-check-row input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.ingredient-check-row.is-checked .ingredient-amount,
+.ingredient-check-row.is-checked .ingredient-name {
+  color: #9ca3af;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
 }
 
 .ingredient-amount {

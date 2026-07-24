@@ -27,6 +27,23 @@ export function RecipeContent({
   steps: RecipeStep[];
 }) {
   const [divisor, setDivisor] = useState<number>(1);
+  const [checkedIngredientIds, setCheckedIngredientIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  function toggleIngredient(ingredientId: string) {
+    setCheckedIngredientIds((current) => {
+      const next = new Set(current);
+
+      if (next.has(ingredientId)) {
+        next.delete(ingredientId);
+      } else {
+        next.add(ingredientId);
+      }
+
+      return next;
+    });
+  }
 
   return (
     <div className="recipe-content">
@@ -58,9 +75,25 @@ export function RecipeContent({
             : `Ingredient quantities divided by ${divisor}.`}
         </p>
 
+        <div className="ingredient-progress">
+          <span aria-live="polite">
+            {checkedIngredientIds.size} of {ingredients.length} checked
+          </span>
+          {checkedIngredientIds.size > 0 && (
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => setCheckedIngredientIds(new Set())}
+            >
+              Clear checked
+            </button>
+          )}
+        </div>
+
         <ul className="ingredient-list">
           {ingredients.map((ingredient) => {
             const scaledQuantity = scaleQuantity(ingredient.quantity, divisor);
+            const isChecked = checkedIngredientIds.has(ingredient.id);
             const amount =
               scaledQuantity === null
                 ? ""
@@ -70,8 +103,19 @@ export function RecipeContent({
 
             return (
               <li key={ingredient.id}>
-                <span className="ingredient-amount">{amount}</span>
-                <span>{ingredient.name}</span>
+                <label
+                  className={`ingredient-check-row${
+                    isChecked ? " is-checked" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleIngredient(ingredient.id)}
+                  />
+                  <span className="ingredient-amount">{amount}</span>
+                  <span className="ingredient-name">{ingredient.name}</span>
+                </label>
               </li>
             );
           })}

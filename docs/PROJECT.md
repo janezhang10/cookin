@@ -45,6 +45,7 @@ Currently available:
 - Ingredient-aware recipe editor
 - Markdown-enabled instructions
 - Scaled ingredient quantities
+- Temporary ingredient checkboxes while cooking
 
 Planned:
 

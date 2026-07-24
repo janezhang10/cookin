@@ -53,7 +53,7 @@
 
 ## Phase 5 — Cooking Experience
 
-- [ ] Ingredient checkboxes
+- [x] Ingredient checkboxes
 - [ ] Cooking mode
 - [ ] Timers
 - [x] Quantity scaling

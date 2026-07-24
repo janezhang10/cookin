@@ -12,6 +12,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Markdown instructions
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4
+- Check off ingredients while cooking
 - Local SQLite storage
 
 ## Run Locally
