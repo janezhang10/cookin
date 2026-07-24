@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { RecipeMarkdown } from "@/lib/markdown/renderer";
 import { formatQuantity, scaleQuantity } from "@/lib/recipe/scale";
 
-import { UnitConverter } from "./unit-converter";
+import { UnitConverter } from "../unit-converter";
 
 interface Ingredient {
   id: string;

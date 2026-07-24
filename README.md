@@ -15,6 +15,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Check off ingredients while cooking
 - Follow one instruction at a time in cooking mode
 - Convert common cooking weight and volume units
+- Confirm before discarding edits or deleting a recipe
 - Local SQLite storage
 
 ## Run Locally

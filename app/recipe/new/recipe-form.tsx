@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useRef, useState } from "react";
 
+import { ConfirmationDialog } from "@/app/confirmation-dialog";
+import { UnitConverter } from "@/app/recipe/unit-converter";
 import {
   createIngredientToken,
   renameIngredientTokens,
@@ -60,6 +63,7 @@ export function RecipeForm({
   units: UnitOption[];
   initialRecipe?: RecipeFormInitialData;
 }) {
+  const router = useRouter();
   const initialIngredients = initialRecipe?.ingredients.map(
     (ingredient, index) => ({
       id: index,
@@ -75,8 +79,24 @@ export function RecipeForm({
   const [ingredients, setIngredients] =
     useState<IngredientRow[]>(initialIngredients);
   const [steps, setSteps] = useState<StepRow[]>(initialSteps);
+  const [title, setTitle] = useState(initialRecipe?.title ?? "");
+  const [discardTarget, setDiscardTarget] = useState<string | null>(null);
   const nextIngredientId = useRef(initialIngredients.length);
   const nextStepId = useRef(initialSteps.length);
+  const allowNavigation = useRef(false);
+  const [initialDraft] = useState(() =>
+    JSON.stringify({
+      title: initialRecipe?.title ?? "",
+      ingredients: initialIngredients.map(
+        ({ quantity, unitId, ingredient }) => ({
+          quantity,
+          unitId,
+          ingredient,
+        }),
+      ),
+      steps: initialSteps.map(({ text }) => ({ text })),
+    }),
+  );
   const ingredientReferenceNames = useRef<Record<number, string>>(
     Object.fromEntries(
       initialIngredients.map((ingredient) => [
@@ -92,6 +112,83 @@ export function RecipeForm({
   const [state, formAction, pending] = useActionState(recipeAction, {
     errors: [],
   });
+  const currentDraft = JSON.stringify({
+    title,
+    ingredients: ingredients.map(({ quantity, unitId, ingredient }) => ({
+      quantity,
+      unitId,
+      ingredient,
+    })),
+    steps: steps.map(({ text }) => ({ text })),
+  });
+  const isDirty = currentDraft !== initialDraft;
+
+  useEffect(() => {
+    if (!isDirty) {
+      return;
+    }
+
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      if (allowNavigation.current) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    }
+
+    function handleDocumentClick(event: MouseEvent) {
+      if (
+        allowNavigation.current ||
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const element =
+        event.target instanceof Element
+          ? event.target
+          : event.target instanceof Node
+            ? event.target.parentElement
+            : null;
+      const link = element?.closest<HTMLAnchorElement>("a[href]");
+
+      if (!link || link.target === "_blank") {
+        return;
+      }
+
+      const destination = new URL(link.href, window.location.href);
+
+      if (destination.origin !== window.location.origin) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      setDiscardTarget(
+        `${destination.pathname}${destination.search}${destination.hash}`,
+      );
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleDocumentClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleDocumentClick, true);
+    };
+  }, [isDirty]);
+
+  useEffect(() => {
+    if (!pending) {
+      allowNavigation.current = false;
+    }
+  }, [pending]);
 
   function updateIngredient(
     id: number,
@@ -152,7 +249,13 @@ export function RecipeForm({
   }
 
   return (
-    <form action={formAction} className="recipe-form">
+    <form
+      action={formAction}
+      className="recipe-form"
+      onSubmit={() => {
+        allowNavigation.current = true;
+      }}
+    >
       <div className="form-field">
         <label htmlFor="title">Title</label>
         <input
@@ -161,7 +264,8 @@ export function RecipeForm({
           type="text"
           maxLength={200}
           placeholder="Chicken Parmesan"
-          defaultValue={initialRecipe?.title}
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
           required
           autoFocus
         />
@@ -329,6 +433,16 @@ export function RecipeForm({
         </ol>
       </section>
 
+      <section className="form-section" aria-labelledby="converter-heading">
+        <div className="section-heading">
+          <div>
+            <h2 id="converter-heading">Unit converter</h2>
+            <p>Use this as a reference while entering ingredient amounts.</p>
+          </div>
+        </div>
+        <UnitConverter />
+      </section>
+
       <input
         type="hidden"
         name="ingredients"
@@ -374,6 +488,24 @@ export function RecipeForm({
               : "Create recipe"}
         </button>
       </div>
+
+      <ConfirmationDialog
+        open={discardTarget !== null}
+        title="Discard your changes?"
+        description="Your unsaved recipe changes will be lost."
+        confirmLabel="Discard changes"
+        cancelLabel="Keep editing"
+        tone="danger"
+        onCancel={() => setDiscardTarget(null)}
+        onConfirm={() => {
+          if (!discardTarget) {
+            return;
+          }
+
+          allowNavigation.current = true;
+          router.push(discardTarget);
+        }}
+      />
     </form>
   );
 }
