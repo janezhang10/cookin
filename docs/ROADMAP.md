@@ -25,7 +25,7 @@
 
 - [x] Search by title
 - [x] Search by ingredient
-- [ ] Multi-ingredient search
+- [x] Multi-ingredient search
 - [ ] Tag filtering
 
 ---

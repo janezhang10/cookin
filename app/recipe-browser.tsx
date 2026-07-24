@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { matchesRecipeSearch, parseSearchTerms } from "@/lib/recipe/search";
+
 interface RecipeSummary {
   id: string;
   title: string;
@@ -17,14 +19,10 @@ interface RecipeSummary {
 export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
+  const searchTerms = parseSearchTerms(query);
+  const isMultiIngredientSearch = searchTerms.length > 1;
   const filteredRecipes = normalizedQuery
-    ? recipes.filter(
-        (recipe) =>
-          recipe.title.toLowerCase().includes(normalizedQuery) ||
-          recipe.ingredients.some(({ ingredient }) =>
-            ingredient.name.toLowerCase().includes(normalizedQuery),
-          ),
-      )
+    ? recipes.filter((recipe) => matchesRecipeSearch(recipe, query))
     : recipes;
 
   return (
@@ -43,7 +41,7 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               className="search"
               type="search"
               value={query}
-              placeholder="Search by recipe or ingredient..."
+              placeholder="Search recipes or ingredients..."
               autoComplete="off"
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -51,6 +49,11 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               New recipe
             </Link>
           </div>
+        )}
+        {recipes.length > 0 && (
+          <p className="search-help">
+            Use commas to require multiple ingredients, like chicken, garlic.
+          </p>
         )}
       </section>
 
@@ -84,7 +87,11 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               {normalizedQuery
                 ? `${filteredRecipes.length} ${
                     filteredRecipes.length === 1 ? "recipe" : "recipes"
-                  } found`
+                  } found${
+                    isMultiIngredientSearch
+                      ? " with all listed ingredients"
+                      : ""
+                  }`
                 : `${recipes.length} ${
                     recipes.length === 1 ? "recipe" : "recipes"
                   }`}

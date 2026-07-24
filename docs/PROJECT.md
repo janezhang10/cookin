@@ -41,7 +41,7 @@ The application is intentionally **not** being designed as a public recipe websi
 Currently available:
 
 - Browse, create, edit, and delete recipes
-- Search by recipe title or ingredient
+- Search by recipe title, ingredient, or multiple comma-separated ingredients
 - Ingredient-aware recipe editor
 - Markdown-enabled instructions
 - Scaled ingredient quantities

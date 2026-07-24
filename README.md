@@ -8,7 +8,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 ## What Works
 
 - Create, edit, and delete recipes
-- Search by recipe title or ingredient
+- Search by recipe title, ingredient, or multiple comma-separated ingredients
 - Markdown instructions
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4
