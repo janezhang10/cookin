@@ -212,8 +212,12 @@ a {
 }
 
 .button:disabled {
-  cursor: wait;
+  cursor: default;
   opacity: 0.65;
+}
+
+.compact-button {
+  padding: 0.65rem 1rem;
 }
 
 .form-page,
@@ -671,6 +675,109 @@ a {
   white-space: nowrap;
 }
 
+.cooking-mode {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--background);
+}
+
+.cooking-mode-shell {
+  display: grid;
+  grid-template-rows: auto minmax(260px, 1fr) auto auto;
+  gap: 1.25rem;
+  width: min(100%, 760px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.cooking-mode-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cooking-mode-header p,
+.cooking-mode-header h2,
+.cooking-step-number {
+  margin: 0;
+}
+
+.cooking-mode-header p,
+.cooking-step-number {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cooking-mode-header h2 {
+  margin-top: 0.25rem;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+}
+
+.cooking-step {
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.cooking-step progress {
+  width: 100%;
+  height: 6px;
+  margin: 0.75rem 0 2rem;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  accent-color: var(--accent);
+}
+
+.cooking-step .instruction-markdown {
+  font-size: clamp(1.2rem, 3vw, 1.55rem);
+  line-height: 1.75;
+}
+
+.cooking-ingredients {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.cooking-ingredients summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.cooking-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cooking-nav-button {
+  padding: 0.9rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.cooking-nav-button:disabled {
+  color: var(--muted);
+  cursor: default;
+  opacity: 0.5;
+}
+
 @media (max-width: 640px) {
   .container {
     padding: 3rem 1rem;
@@ -715,5 +822,14 @@ a {
 
   .search {
     max-width: none;
+  }
+
+  .cooking-mode-shell {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .cooking-step {
+    padding: 1.25rem;
   }
 }

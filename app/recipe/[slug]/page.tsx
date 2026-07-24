@@ -34,6 +34,7 @@ export default async function RecipePage({
       </header>
 
       <RecipeContent
+        title={recipe.title}
         ingredients={recipe.ingredients.map((item) => ({
           id: item.id,
           quantity: item.quantity,

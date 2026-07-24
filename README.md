@@ -13,6 +13,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4
 - Check off ingredients while cooking
+- Follow one instruction at a time in cooking mode
 - Local SQLite storage
 
 ## Run Locally

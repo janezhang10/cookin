@@ -46,6 +46,7 @@ Currently available:
 - Markdown-enabled instructions
 - Scaled ingredient quantities
 - Temporary ingredient checkboxes while cooking
+- Focused, step-by-step cooking mode
 
 Planned:
 
