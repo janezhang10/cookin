@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 
-import {
-  normalizeIngredientName,
-  parseIngredientTokens,
-} from "@/lib/markdown/ingredientTokens";
+import { RecipeMarkdown } from "@/lib/markdown/renderer";
 import { formatQuantity, scaleQuantity } from "@/lib/recipe/scale";
 
 interface Ingredient {
@@ -22,22 +19,6 @@ interface RecipeStep {
 
 const DIVISORS = [1, 2, 3, 4] as const;
 
-function formatIngredientReference(ingredient: Ingredient, divisor: number) {
-  const quantity = scaleQuantity(ingredient.quantity, divisor);
-
-  if (quantity === null) {
-    return ingredient.name;
-  }
-
-  return [
-    formatQuantity(quantity),
-    ingredient.unitAbbreviation,
-    ingredient.name,
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
 export function RecipeContent({
   ingredients,
   steps,
@@ -46,12 +27,6 @@ export function RecipeContent({
   steps: RecipeStep[];
 }) {
   const [divisor, setDivisor] = useState<number>(1);
-  const ingredientsByName = new Map(
-    ingredients.map((ingredient) => [
-      normalizeIngredientName(ingredient.name),
-      ingredient,
-    ]),
-  );
 
   return (
     <div className="recipe-content">
@@ -108,27 +83,11 @@ export function RecipeContent({
         <ol className="instruction-list">
           {steps.map((step) => (
             <li key={step.id}>
-              <span className="instruction-text">
-                {parseIngredientTokens(step.markdown).map((part, index) => {
-                  if (part.type === "text") {
-                    return <span key={index}>{part.value}</span>;
-                  }
-
-                  const ingredient = ingredientsByName.get(
-                    normalizeIngredientName(part.name),
-                  );
-
-                  if (!ingredient) {
-                    return <span key={index}>{part.raw}</span>;
-                  }
-
-                  return (
-                    <span className="ingredient-reference" key={index}>
-                      {formatIngredientReference(ingredient, divisor)}
-                    </span>
-                  );
-                })}
-              </span>
+              <RecipeMarkdown
+                markdown={step.markdown}
+                ingredients={ingredients}
+                divisor={divisor}
+              />
             </li>
           ))}
         </ol>

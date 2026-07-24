@@ -589,8 +589,42 @@ a {
   line-height: 1.65;
 }
 
-.instruction-text {
-  white-space: pre-wrap;
+.instruction-markdown > :first-child {
+  margin-top: 0;
+}
+
+.instruction-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.instruction-markdown p {
+  margin: 0.5rem 0;
+}
+
+.instruction-markdown ul,
+.instruction-markdown ol {
+  margin: 0.6rem 0;
+  padding-left: 1.5rem;
+}
+
+.instruction-markdown a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.instruction-markdown code {
+  padding: 0.1rem 0.3rem;
+  border-radius: 5px;
+  background: #f4f4f2;
+  font-size: 0.9em;
+}
+
+.instruction-markdown blockquote {
+  margin: 0.75rem 0;
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
 }
 
 .ingredient-reference {

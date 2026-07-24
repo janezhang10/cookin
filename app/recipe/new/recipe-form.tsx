@@ -265,7 +265,7 @@ export function RecipeForm({
         <div className="section-heading">
           <div>
             <h2 id="steps-heading">Instructions</h2>
-            <p>Keep each instruction in its own step.</p>
+            <p>Keep each instruction in its own step. Markdown is supported.</p>
           </div>
           <button
             className="secondary-button"
