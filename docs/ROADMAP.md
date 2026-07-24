@@ -57,6 +57,7 @@
 - [x] Cooking mode
 - [ ] Timers
 - [x] Quantity scaling
+- [x] Unit conversions
 
 ---
 

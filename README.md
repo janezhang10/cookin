@@ -14,6 +14,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Divide ingredient quantities by 1, 2, 3, or 4
 - Check off ingredients while cooking
 - Follow one instruction at a time in cooking mode
+- Convert common cooking weight and volume units
 - Local SQLite storage
 
 ## Run Locally

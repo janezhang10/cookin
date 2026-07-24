@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { RecipeMarkdown } from "@/lib/markdown/renderer";
 import { formatQuantity, scaleQuantity } from "@/lib/recipe/scale";
 
+import { UnitConverter } from "./unit-converter";
+
 interface Ingredient {
   id: string;
   quantity: number | null;
@@ -201,6 +203,15 @@ export function RecipeContent({
         </ol>
       </section>
 
+      <section className="recipe-panel">
+        <h2>Unit converter</h2>
+        <p className="panel-description">
+          Convert common cooking weights and volumes without changing the
+          recipe.
+        </p>
+        <UnitConverter />
+      </section>
+
       {isCooking && currentStep && (
         <div
           className="cooking-mode"
@@ -249,6 +260,11 @@ export function RecipeContent({
                 onToggle={toggleIngredient}
                 onClear={() => setCheckedIngredientIds(new Set())}
               />
+            </details>
+
+            <details className="cooking-ingredients">
+              <summary>Unit converter</summary>
+              <UnitConverter />
             </details>
 
             <nav className="cooking-navigation" aria-label="Cooking steps">
