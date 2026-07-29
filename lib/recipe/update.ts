@@ -1,5 +1,6 @@
 import { findOrCreateIngredient } from "@/lib/ingredient/findOrCreate";
 import { prisma } from "@/lib/db/client";
+import { findOrCreateTag } from "@/lib/tag/findOrCreate";
 
 import { recipeInclude } from "./include";
 import { generateSlug } from "./slug";
@@ -9,6 +10,9 @@ export async function updateRecipe(recipeId: string, input: CreateRecipeInput) {
   const slug = await generateSlug(input.title, recipeId);
 
   return prisma.$transaction(async (tx) => {
+    await tx.recipeTag.deleteMany({
+      where: { recipeId },
+    });
     await tx.recipeStep.deleteMany({
       where: { recipeId },
     });
@@ -23,6 +27,18 @@ export async function updateRecipe(recipeId: string, input: CreateRecipeInput) {
         slug,
       },
     });
+
+    for (const [displayOrder, inputTag] of input.tags.entries()) {
+      const tag = await findOrCreateTag(tx, inputTag);
+
+      await tx.recipeTag.create({
+        data: {
+          recipeId,
+          tagId: tag.id,
+          displayOrder,
+        },
+      });
+    }
 
     for (const [displayOrder, inputIngredient] of input.ingredients.entries()) {
       const ingredient = await findOrCreateIngredient(

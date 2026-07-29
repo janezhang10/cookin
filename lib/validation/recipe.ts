@@ -4,6 +4,7 @@ import {
   extractIngredientTokenNames,
   normalizeIngredientName,
 } from "@/lib/markdown/ingredientTokens";
+import { normalizeTagName } from "@/lib/tag/findOrCreate";
 
 const nullableQuantitySchema = z.preprocess(
   (value) =>
@@ -17,9 +18,42 @@ const nullableUnitIdSchema = z.preprocess(
   z.string().min(1).nullable(),
 );
 
+const tagsSchema = z.preprocess(
+  (value) =>
+    typeof value === "string"
+      ? value
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      : value,
+  z
+    .array(
+      z
+        .string()
+        .trim()
+        .min(1)
+        .max(40, "Each tag must be 40 characters or fewer."),
+    )
+    .max(20, "Add no more than 20 tags.")
+    .transform((tags) => {
+      const uniqueTags = new Map<string, string>();
+
+      for (const tag of tags) {
+        const normalizedName = normalizeTagName(tag);
+
+        if (!uniqueTags.has(normalizedName)) {
+          uniqueTags.set(normalizedName, tag);
+        }
+      }
+
+      return Array.from(uniqueTags.values());
+    }),
+);
+
 export const createRecipeSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required.").max(200),
+    tags: tagsSchema,
     ingredients: z
       .array(
         z.object({

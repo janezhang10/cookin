@@ -10,6 +10,7 @@ export interface CreateRecipeStepInput {
 
 export interface CreateRecipeInput {
   title: string;
+  tags: string[];
   ingredients: CreateRecipeIngredientInput[];
   steps: CreateRecipeStepInput[];
 }

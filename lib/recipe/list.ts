@@ -6,6 +6,19 @@ export async function listRecipes() {
       id: true,
       title: true,
       slug: true,
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+              normalizedName: true,
+            },
+          },
+        },
+        orderBy: {
+          displayOrder: "asc",
+        },
+      },
       ingredients: {
         select: {
           ingredient: {

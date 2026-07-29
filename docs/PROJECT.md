@@ -42,6 +42,7 @@ Currently available:
 
 - Browse, create, edit, and delete recipes
 - Search by recipe title, ingredient, or multiple comma-separated ingredients
+- Recipe tags and one-click tag filtering
 - Ingredient-aware recipe editor
 - Markdown-enabled instructions
 - Scaled ingredient quantities
@@ -55,8 +56,6 @@ Planned:
 
 - Recipe photos
 - Favorites
-- Tags
-- Cooking mode
 - Import existing recipes
 
 ---

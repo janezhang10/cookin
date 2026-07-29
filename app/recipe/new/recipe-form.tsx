@@ -34,6 +34,7 @@ export interface RecipeFormInitialData {
   id: string;
   slug: string;
   title: string;
+  tags: string[];
   ingredients: Array<{
     quantity: number | null;
     unitId: string | null;
@@ -80,6 +81,7 @@ export function RecipeForm({
     useState<IngredientRow[]>(initialIngredients);
   const [steps, setSteps] = useState<StepRow[]>(initialSteps);
   const [title, setTitle] = useState(initialRecipe?.title ?? "");
+  const [tags, setTags] = useState(initialRecipe?.tags.join(", ") ?? "");
   const [discardTarget, setDiscardTarget] = useState<string | null>(null);
   const nextIngredientId = useRef(initialIngredients.length);
   const nextStepId = useRef(initialSteps.length);
@@ -87,6 +89,7 @@ export function RecipeForm({
   const [initialDraft] = useState(() =>
     JSON.stringify({
       title: initialRecipe?.title ?? "",
+      tags: initialRecipe?.tags.join(", ") ?? "",
       ingredients: initialIngredients.map(
         ({ quantity, unitId, ingredient }) => ({
           quantity,
@@ -114,6 +117,7 @@ export function RecipeForm({
   });
   const currentDraft = JSON.stringify({
     title,
+    tags,
     ingredients: ingredients.map(({ quantity, unitId, ingredient }) => ({
       quantity,
       unitId,
@@ -269,6 +273,20 @@ export function RecipeForm({
           required
           autoFocus
         />
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="tags">Tags</label>
+        <input
+          id="tags"
+          name="tags"
+          type="text"
+          maxLength={800}
+          placeholder="Dinner, quick, chicken"
+          value={tags}
+          onChange={(event) => setTags(event.target.value)}
+        />
+        <p className="form-help">Separate tags with commas.</p>
       </div>
 
       <section className="form-section" aria-labelledby="ingredients-heading">

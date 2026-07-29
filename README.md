@@ -9,6 +9,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 
 - Create, edit, and delete recipes
 - Search by recipe title, ingredient, or multiple comma-separated ingredients
+- Add tags and filter the recipe list by tag
 - Markdown instructions
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4

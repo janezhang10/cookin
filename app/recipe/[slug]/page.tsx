@@ -25,7 +25,18 @@ export default async function RecipePage({
       </Link>
 
       <header className="page-header recipe-title-row">
-        <h1>{recipe.title}</h1>
+        <div>
+          <h1>{recipe.title}</h1>
+          {recipe.tags.length > 0 && (
+            <div className="recipe-tags" aria-label="Recipe tags">
+              {recipe.tags.map(({ tag }) => (
+                <span className="tag-chip" key={tag.id}>
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         <RecipeActions
           recipeId={recipe.id}
           slug={recipe.slug}

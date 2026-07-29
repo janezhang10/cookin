@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { findOrCreateIngredient } from "@/lib/ingredient/findOrCreate";
+import { findOrCreateTag } from "@/lib/tag/findOrCreate";
 
 import { generateSlug } from "./slug";
 import { recipeInclude } from "./include";
@@ -15,6 +16,18 @@ export async function createRecipe(input: CreateRecipeInput) {
         slug,
       },
     });
+
+    for (const [displayOrder, inputTag] of input.tags.entries()) {
+      const tag = await findOrCreateTag(tx, inputTag);
+
+      await tx.recipeTag.create({
+        data: {
+          recipeId: recipe.id,
+          tagId: tag.id,
+          displayOrder,
+        },
+      });
+    }
 
     for (const [displayOrder, inputIngredient] of input.ingredients.entries()) {
       const ingredient = await findOrCreateIngredient(

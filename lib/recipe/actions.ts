@@ -57,6 +57,7 @@ function parseRecipeForm(formData: FormData) {
 
   const parsed = createRecipeSchema.safeParse({
     title: formData.get("title"),
+    tags: formData.get("tags"),
     ingredients,
     steps,
   });

@@ -162,6 +162,59 @@ a {
   font-size: 0.9rem;
 }
 
+.tag-filters,
+.recipe-card-tags,
+.recipe-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tag-filters {
+  margin-bottom: 1.25rem;
+}
+
+.tag-filters button,
+.tag-chip {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.tag-filters button {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.tag-filters button:hover {
+  border-color: #d8b2a7;
+  color: var(--accent-hover);
+}
+
+.tag-filters button[aria-pressed="true"] {
+  border-color: #e5b5a8;
+  background: #f3e8e4;
+  color: #8e4937;
+}
+
+.recipe-card-tags {
+  margin-top: 0.8rem;
+}
+
+.recipe-tags {
+  margin-top: 0.75rem;
+}
+
+.recipe-tags .tag-chip {
+  background: #f3e8e4;
+  color: #8e4937;
+}
+
 .empty-state {
   text-align: center;
 
@@ -292,6 +345,12 @@ a {
 .form-field {
   display: grid;
   gap: 0.6rem;
+}
+
+.form-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .form-field label,

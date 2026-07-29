@@ -60,6 +60,9 @@ Major entities include:
 - RecipeIngredient
 - RecipeStep
 - RecipeStepIngredientUsage
-  Tags and photos remain planned features and are not yet in the Prisma schema.
+- Tag
+- RecipeTag
+
+Photos remain a planned feature and are not yet in the Prisma schema.
 
 Relationships will be documented as the schema evolves.

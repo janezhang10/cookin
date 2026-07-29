@@ -1,4 +1,12 @@
 export const recipeInclude = {
+  tags: {
+    include: {
+      tag: true,
+    },
+    orderBy: {
+      displayOrder: "asc",
+    },
+  },
   ingredients: {
     include: {
       ingredient: true,
