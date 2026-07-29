@@ -64,6 +64,9 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               autoComplete="off"
               onChange={(event) => setQuery(event.target.value)}
             />
+            <Link href="/recipe/import" className="secondary-action-button">
+              Import
+            </Link>
             <Link href="/recipe/new" className="button">
               New recipe
             </Link>
@@ -112,6 +115,9 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
             </p>
             <Link href="/recipe/new" className="button">
               New recipe
+            </Link>
+            <Link href="/recipe/import" className="empty-state-import-link">
+              Import a recipe instead
             </Link>
           </div>
         ) : filteredRecipes.length === 0 ? (

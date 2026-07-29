@@ -98,6 +98,24 @@ a {
   white-space: nowrap;
 }
 
+.secondary-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--accent-hover);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.secondary-action-button:hover {
+  border-color: #d8b2a7;
+  background: #fff8f6;
+}
+
 .hero .search-help {
   margin: 0.65rem 0 0;
   font-size: 0.85rem;
@@ -236,6 +254,14 @@ a {
   max-width: 420px;
 
   margin: 1rem auto 2rem;
+}
+
+.empty-state-import-link {
+  display: block;
+  width: fit-content;
+  margin: 1rem auto 0;
+  color: var(--accent-hover);
+  font-weight: 600;
 }
 
 .button {
@@ -543,6 +569,92 @@ a {
   align-items: center;
   justify-content: flex-end;
   gap: 1.25rem;
+}
+
+.import-panel,
+.import-review {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.import-textarea {
+  min-height: 320px;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.import-textarea:focus {
+  outline: 3px solid rgba(224, 122, 95, 0.18);
+  border-color: var(--accent);
+}
+
+.import-example {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.import-example summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.import-example pre {
+  overflow-x: auto;
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font: 0.9rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+.import-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.import-review-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.import-review-heading h2,
+.import-review-heading p {
+  margin: 0;
+}
+
+.import-review-heading p {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.import-warnings {
+  padding: 1rem 1.25rem;
+  border: 1px solid #e7c988;
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #795b19;
+}
+
+.import-warnings p {
+  margin: 0;
+  font-weight: 700;
+}
+
+.import-warnings ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
 }
 
 .dialog-backdrop {
@@ -1139,6 +1251,10 @@ a {
 
   .search {
     max-width: none;
+  }
+
+  .import-review-heading {
+    flex-direction: column;
   }
 
   .cooking-mode-shell {

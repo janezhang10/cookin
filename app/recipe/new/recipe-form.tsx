@@ -30,9 +30,7 @@ interface StepRow {
   text: string;
 }
 
-export interface RecipeFormInitialData {
-  id: string;
-  slug: string;
+export interface RecipeFormDraftData {
   title: string;
   tags: string[];
   ingredients: Array<{
@@ -43,6 +41,11 @@ export interface RecipeFormInitialData {
   steps: Array<{
     text: string;
   }>;
+}
+
+export interface RecipeFormInitialData extends RecipeFormDraftData {
+  id: string;
+  slug: string;
 }
 
 const emptyIngredient = (id: number): IngredientRow => ({
@@ -60,12 +63,15 @@ const emptyStep = (id: number): StepRow => ({
 export function RecipeForm({
   units,
   initialRecipe,
+  draftRecipe,
 }: {
   units: UnitOption[];
   initialRecipe?: RecipeFormInitialData;
+  draftRecipe?: RecipeFormDraftData;
 }) {
   const router = useRouter();
-  const initialIngredients = initialRecipe?.ingredients.map(
+  const sourceRecipe = initialRecipe ?? draftRecipe;
+  const initialIngredients = sourceRecipe?.ingredients.map(
     (ingredient, index) => ({
       id: index,
       quantity: ingredient.quantity === null ? "" : String(ingredient.quantity),
@@ -73,15 +79,15 @@ export function RecipeForm({
       ingredient: ingredient.ingredient,
     }),
   ) ?? [emptyIngredient(0)];
-  const initialSteps = initialRecipe?.steps.map((step, index) => ({
+  const initialSteps = sourceRecipe?.steps.map((step, index) => ({
     id: index,
     text: step.text,
   })) ?? [emptyStep(0)];
   const [ingredients, setIngredients] =
     useState<IngredientRow[]>(initialIngredients);
   const [steps, setSteps] = useState<StepRow[]>(initialSteps);
-  const [title, setTitle] = useState(initialRecipe?.title ?? "");
-  const [tags, setTags] = useState(initialRecipe?.tags.join(", ") ?? "");
+  const [title, setTitle] = useState(sourceRecipe?.title ?? "");
+  const [tags, setTags] = useState(sourceRecipe?.tags.join(", ") ?? "");
   const [discardTarget, setDiscardTarget] = useState<string | null>(null);
   const nextIngredientId = useRef(initialIngredients.length);
   const nextStepId = useRef(initialSteps.length);
@@ -90,14 +96,20 @@ export function RecipeForm({
     JSON.stringify({
       title: initialRecipe?.title ?? "",
       tags: initialRecipe?.tags.join(", ") ?? "",
-      ingredients: initialIngredients.map(
-        ({ quantity, unitId, ingredient }) => ({
-          quantity,
-          unitId,
-          ingredient,
-        }),
-      ),
-      steps: initialSteps.map(({ text }) => ({ text })),
+      ingredients: initialRecipe
+        ? initialIngredients.map(({ quantity, unitId, ingredient }) => ({
+            quantity,
+            unitId,
+            ingredient,
+          }))
+        : [emptyIngredient(0)].map(({ quantity, unitId, ingredient }) => ({
+            quantity,
+            unitId,
+            ingredient,
+          })),
+      steps: initialRecipe
+        ? initialSteps.map(({ text }) => ({ text }))
+        : [emptyStep(0)].map(({ text }) => ({ text })),
     }),
   );
   const ingredientReferenceNames = useRef<Record<number, string>>(
