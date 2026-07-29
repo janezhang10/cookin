@@ -12,15 +12,15 @@ import {
   type ImportUnitOption,
 } from "@/lib/recipe/importPlainText";
 
-const exampleRecipe = `Chicken Soup
-Tags: dinner, soup
+const exampleRecipe = `# Chicken Soup
+**Tags:** dinner, soup
 
-Ingredients:
-1 lb chicken
-2 cups broth
-1/2 tsp salt
+## Ingredients
+- 1 lb chicken
+- 2 cups broth
+- 1/2 tsp salt
 
-Instructions:
+## Instructions
 1. Brown the chicken.
 2. Add the broth and simmer for 20 minutes.
 3. Season with salt.`;
@@ -110,8 +110,8 @@ export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
           }}
         />
         <p className="form-help">
-          Use Ingredients and Instructions headings. One ingredient or step per
-          line works best.
+          Markdown is optional. Use Ingredients and Instructions headings; one
+          ingredient or step per line works best.
         </p>
       </div>
 
@@ -127,7 +127,7 @@ export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
       )}
 
       <details className="import-example">
-        <summary>Show example format</summary>
+        <summary>Show Markdown example</summary>
         <pre>{exampleRecipe}</pre>
       </details>
 

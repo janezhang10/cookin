@@ -51,13 +51,13 @@ Currently available:
 - Pauseable cooking timer
 - Cooking unit converter with approximate ingredient-density presets
 - Unsaved-change protection and styled destructive confirmations
-- Plain-text recipe import with an editable review before saving
+- Plain-text and Markdown recipe import with an editable review before saving
 
 Planned:
 
 - Recipe photos
 - Favorites
-- Import recipes from Markdown and PDF
+- Import recipes from PDF
 
 ---
 

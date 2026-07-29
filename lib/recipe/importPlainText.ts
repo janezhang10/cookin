@@ -60,11 +60,44 @@ const instructionHeadings = new Set([
 ]);
 
 function normalizeHeading(line: string) {
-  return line.trim().toLowerCase().replace(/:$/, "").trim();
+  return line
+    .trim()
+    .replace(/^#{1,6}\s+/, "")
+    .replace(/\s+#+$/, "")
+    .toLowerCase()
+    .replace(/:$/, "")
+    .trim();
 }
 
 function stripListPrefix(line: string) {
-  return line.replace(/^\s*(?:(?:[-*•])\s+|\d+[.)]\s+)/, "").trim();
+  return line
+    .replace(/^\s*(?:(?:[-*•+])\s+(?:\[[ xX]\]\s+)?|\d+[.)]\s+)/, "")
+    .trim();
+}
+
+function stripMarkdownHeading(line: string) {
+  const match = line.match(/^#{1,6}\s+(.+?)\s*#*$/);
+  return match?.[1].trim() ?? null;
+}
+
+function stripMetadataFormatting(line: string) {
+  return line
+    .replace(/^(\*\*|__)(.+)(\*\*|__)$/, "$2")
+    .replace(/^(\*\*|__)([^:]+):(\*\*|__)\s*/, "$2: ")
+    .trim();
+}
+
+function parseTags(value: string) {
+  const hashtagMatches = Array.from(value.matchAll(/#([\p{L}\p{N}_-]+)/gu));
+
+  if (!value.includes(",") && hashtagMatches.length > 0) {
+    return hashtagMatches.map((match) => match[1]);
+  }
+
+  return value
+    .split(",")
+    .map((tag) => tag.trim().replace(/^#/, ""))
+    .filter(Boolean);
 }
 
 function parseFraction(value: string) {
@@ -124,7 +157,8 @@ function parseIngredientLine(
   line: string,
   unitAliases: ReturnType<typeof createUnitAliases>,
 ) {
-  const { quantity, rest } = parseLeadingQuantity(stripListPrefix(line));
+  const ingredientText = stripListPrefix(line).replace(/(\*\*|__)/g, "");
+  const { quantity, rest } = parseLeadingQuantity(ingredientText);
   const normalizedRest = rest.toLowerCase();
   const matchedUnit = unitAliases.find(
     ({ alias }) =>
@@ -164,6 +198,7 @@ export function parsePlainTextRecipe(
     }
 
     const heading = normalizeHeading(line);
+    const markdownHeading = stripMarkdownHeading(line);
 
     if (ingredientHeadings.has(heading)) {
       section = "ingredients";
@@ -175,18 +210,21 @@ export function parsePlainTextRecipe(
       continue;
     }
 
-    const titleMatch = line.match(/^title\s*:\s*(.+)$/i);
+    if (markdownHeading && !title) {
+      title = markdownHeading;
+      continue;
+    }
+
+    const metadataLine = stripMetadataFormatting(line);
+    const titleMatch = metadataLine.match(/^title\s*:\s*(.+)$/i);
     if (titleMatch && !title) {
       title = titleMatch[1].trim();
       continue;
     }
 
-    const tagsMatch = line.match(/^tags?\s*:\s*(.+)$/i);
+    const tagsMatch = metadataLine.match(/^tags?\s*:\s*(.+)$/i);
     if (tagsMatch && section === null) {
-      tags = tagsMatch[1]
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean);
+      tags = parseTags(tagsMatch[1]);
       continue;
     }
 

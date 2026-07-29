@@ -45,7 +45,7 @@
 ## Phase 4 — Recipe Import
 
 - [x] Plain text import
-- [ ] Markdown import
+- [x] Markdown import
 - [ ] PDF import
 - [x] Parsing review screen
 

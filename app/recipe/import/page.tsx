@@ -14,7 +14,9 @@ export default async function ImportRecipePage() {
       </Link>
       <header className="page-header">
         <h1>Import recipe</h1>
-        <p>Paste a recipe, review what was found, then save it.</p>
+        <p>
+          Paste plain text or Markdown, review what was found, then save it.
+        </p>
       </header>
       <RecipeImporter units={units} />
     </main>
