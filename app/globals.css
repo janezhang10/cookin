@@ -900,6 +900,107 @@ a {
   line-height: 1.75;
 }
 
+.cooking-timer {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.cooking-timer.is-done {
+  border-color: #dfa18f;
+  background: #fff6f3;
+}
+
+.cooking-timer-heading,
+.timer-setup,
+.timer-actions {
+  display: flex;
+  align-items: center;
+}
+
+.cooking-timer-heading {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cooking-timer-heading p,
+.cooking-timer-heading h3 {
+  margin: 0;
+}
+
+.cooking-timer-heading p {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cooking-timer-heading h3 {
+  margin-top: 0.15rem;
+  font-size: 1.1rem;
+}
+
+.timer-countdown {
+  color: var(--accent-hover);
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+}
+
+.timer-setup {
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.timer-setup label {
+  display: grid;
+  gap: 0.25rem;
+  width: 76px;
+}
+
+.timer-setup label span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.timer-setup input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-setup .button {
+  align-self: end;
+  margin-left: 0.25rem;
+}
+
+.timer-actions {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.timer-secondary-button {
+  padding: 0.6rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-hover);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
 .cooking-ingredients {
   padding: 1rem 1.25rem;
   border: 1px solid var(--border);
@@ -988,6 +1089,16 @@ a {
 
   .cooking-step {
     padding: 1.25rem;
+  }
+
+  .timer-setup {
+    align-items: end;
+    flex-wrap: wrap;
+  }
+
+  .timer-setup .button {
+    width: 100%;
+    margin: 0.25rem 0 0;
   }
 
   .unit-converter-fields {

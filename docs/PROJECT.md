@@ -47,6 +47,7 @@ Currently available:
 - Scaled ingredient quantities
 - Temporary ingredient checkboxes while cooking
 - Focused, step-by-step cooking mode
+- Pauseable cooking timer
 - Cooking unit converter with approximate ingredient-density presets
 - Unsaved-change protection and styled destructive confirmations
 

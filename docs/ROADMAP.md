@@ -55,7 +55,7 @@
 
 - [x] Ingredient checkboxes
 - [x] Cooking mode
-- [ ] Timers
+- [x] Timers
 - [x] Quantity scaling
 - [x] Unit conversions
 

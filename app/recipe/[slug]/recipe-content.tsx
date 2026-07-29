@@ -6,6 +6,7 @@ import { RecipeMarkdown } from "@/lib/markdown/renderer";
 import { formatQuantity, scaleQuantity } from "@/lib/recipe/scale";
 
 import { UnitConverter } from "../unit-converter";
+import { CookingTimer } from "./cooking-timer";
 
 interface Ingredient {
   id: string;
@@ -247,6 +248,8 @@ export function RecipeContent({
                 divisor={divisor}
               />
             </section>
+
+            <CookingTimer />
 
             <details className="cooking-ingredients">
               <summary>
