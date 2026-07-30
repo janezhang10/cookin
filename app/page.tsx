@@ -6,7 +6,7 @@ export default async function HomePage() {
   const recipes = await listRecipes();
 
   return (
-    <main className="container">
+    <main id="main-content" className="container" tabIndex={-1}>
       <RecipeBrowser recipes={recipes} />
     </main>
   );

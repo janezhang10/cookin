@@ -21,7 +21,7 @@ export default async function EditRecipePage({
   }
 
   return (
-    <main className="container form-page">
+    <main id="main-content" className="container form-page" tabIndex={-1}>
       <Link href={`/recipe/${recipe.slug}`} className="back-link">
         ← Back to recipe
       </Link>

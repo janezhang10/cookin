@@ -89,7 +89,11 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
 
       <section className="recipes">
         {recipes.length > 0 && (
-          <div className="tag-filters" aria-label="Filter recipes by tag">
+          <div
+            className="tag-filters"
+            role="group"
+            aria-label="Filter recipes by tag"
+          >
             <button
               type="button"
               aria-pressed={selectedTag === null && !showFavoritesOnly}

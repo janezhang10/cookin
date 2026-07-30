@@ -4,7 +4,11 @@ import { SettingsControls } from "./settings-controls";
 
 export default function SettingsPage() {
   return (
-    <main className="container form-page settings-page">
+    <main
+      id="main-content"
+      className="container form-page settings-page"
+      tabIndex={-1}
+    >
       <Link href="/" className="back-link">
         &larr; Recipes
       </Link>

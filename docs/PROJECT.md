@@ -57,10 +57,11 @@ Currently available:
 - Persistent recipe favorites and favorites filtering
 - Device-aware dark mode with a remembered local preference
 - Device-local theme and text-size settings
+- Keyboard navigation, focus-managed dialogs, reduced-motion support, and
+  accessible contrast
 
 Planned:
 
-- Accessibility improvements
 - Private authenticated online hosting
 
 ---

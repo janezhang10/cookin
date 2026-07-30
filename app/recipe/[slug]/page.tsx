@@ -20,7 +20,7 @@ export default async function RecipePage({
   }
 
   return (
-    <main className="container recipe-page">
+    <main id="main-content" className="container recipe-page" tabIndex={-1}>
       <Link href="/" className="back-link">
         ← All recipes
       </Link>

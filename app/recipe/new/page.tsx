@@ -7,7 +7,7 @@ export default async function NewRecipePage() {
   const units = await listUnits();
 
   return (
-    <main className="container form-page">
+    <main id="main-content" className="container form-page" tabIndex={-1}>
       <Link href="/" className="back-link">
         ← All recipes
       </Link>

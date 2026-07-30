@@ -13,13 +13,14 @@
   --border: #e5e7eb;
   --border-hover: #d1d5db;
 
-  --accent: #e07a5f;
-  --accent-hover: #cf694e;
+  --accent: #b84e35;
+  --accent-hover: #9f3f29;
   --accent-border: #d8b2a7;
   --accent-soft-border: #e5b5a8;
   --accent-soft: #f3e8e4;
   --accent-soft-text: #8e4937;
   --on-accent: #ffffff;
+  --focus-ring: #8f321f;
 
   --favorite: #c58a19;
   --favorite-border: #dfc17b;
@@ -65,6 +66,7 @@
   --accent-soft: #172f40;
   --accent-soft-text: #8cc8f2;
   --on-accent: #ffffff;
+  --focus-ring: #77bff2;
   --favorite: #e5b84f;
   --favorite-border: #735e2e;
   --favorite-active-border: #8d7432;
@@ -105,6 +107,7 @@
     --accent-soft: #172f40;
     --accent-soft-text: #8cc8f2;
     --on-accent: #ffffff;
+    --focus-ring: #77bff2;
     --favorite: #e5b84f;
     --favorite-border: #735e2e;
     --favorite-active-border: #8d7432;
@@ -147,6 +150,34 @@ body {
   min-height: 100vh;
   margin: 0;
   background: var(--background);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 2000;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  transform: translateY(calc(-100% - 1rem));
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+main:focus {
+  outline: none;
 }
 
 .site-controls {
@@ -216,7 +247,7 @@ body {
 
 .settings-shortcut:focus-visible,
 .theme-toggle:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
@@ -379,6 +410,13 @@ a {
   border-color: var(--border-hover);
 
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.recipe-card:focus-visible {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent),
+    var(--shadow);
 }
 
 .favorite-form {
@@ -665,7 +703,7 @@ a {
 }
 
 .settings-option:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -751,10 +789,6 @@ a {
   color: #a6d7f9;
 }
 
-:root[data-theme="dark"] .recipe-management .danger-button:focus-visible {
-  outline-color: color-mix(in srgb, #77bff2 35%, transparent);
-}
-
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .recipe-management .danger-button {
     color: #77bff2;
@@ -763,16 +797,10 @@ a {
   :root:not([data-theme="light"]) .recipe-management .danger-button:hover {
     color: #a6d7f9;
   }
-
-  :root:not([data-theme="light"])
-    .recipe-management
-    .danger-button:focus-visible {
-    outline-color: color-mix(in srgb, #77bff2 35%, transparent);
-  }
 }
 
 .danger-button:focus-visible {
-  outline: 3px solid rgba(177, 70, 47, 0.2);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
@@ -943,7 +971,7 @@ a {
 }
 
 .ingredient-reference-picker button:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -1232,7 +1260,7 @@ a {
 
 .dialog-cancel-button:focus-visible,
 .dialog-danger-button:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -1317,7 +1345,7 @@ a {
 }
 
 .scale-option:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -1709,6 +1737,17 @@ a {
   color: var(--muted);
   cursor: default;
   opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 640px) {

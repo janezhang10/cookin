@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { RecipeMarkdown } from "@/lib/markdown/renderer";
 import { formatQuantity, scaleQuantity } from "@/lib/recipe/scale";
@@ -97,6 +97,9 @@ export function RecipeContent({
   );
   const [isCooking, setIsCooking] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const startCookingButtonRef = useRef<HTMLButtonElement>(null);
+  const cookingModeRef = useRef<HTMLDivElement>(null);
+  const exitCookingButtonRef = useRef<HTMLButtonElement>(null);
   const currentStep = steps[currentStepIndex];
 
   useEffect(() => {
@@ -105,19 +108,52 @@ export function RecipeContent({
     }
 
     const previousOverflow = document.body.style.overflow;
+    const startCookingButton = startCookingButtonRef.current;
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsCooking(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !cookingModeRef.current) {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        cookingModeRef.current.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), select:not(:disabled), summary, [href], [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements.at(-1);
+
+      if (!firstElement || !lastElement) {
+        event.preventDefault();
+        return;
+      }
+
+      if (
+        event.shiftKey &&
+        (document.activeElement === firstElement ||
+          !cookingModeRef.current.contains(document.activeElement))
+      ) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     }
 
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
+    exitCookingButtonRef.current?.focus();
 
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      startCookingButton?.focus();
     };
   }, [isCooking]);
 
@@ -183,6 +219,7 @@ export function RecipeContent({
         <div className="recipe-panel-heading">
           <h2>Instructions</h2>
           <button
+            ref={startCookingButtonRef}
             type="button"
             className="button compact-button"
             disabled={steps.length === 0}
@@ -215,6 +252,7 @@ export function RecipeContent({
 
       {isCooking && currentStep && (
         <div
+          ref={cookingModeRef}
           className="cooking-mode"
           role="dialog"
           aria-modal="true"
@@ -227,6 +265,7 @@ export function RecipeContent({
                 <h2>{title}</h2>
               </div>
               <button
+                ref={exitCookingButtonRef}
                 type="button"
                 className="text-button"
                 onClick={() => setIsCooking(false)}

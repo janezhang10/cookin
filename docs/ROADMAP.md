@@ -67,7 +67,7 @@
 - [x] Favorites
 - [x] Dark mode
 - [x] Settings
-- [ ] Accessibility improvements
+- [x] Accessibility improvements
 
 ---
 

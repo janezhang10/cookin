@@ -29,6 +29,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <nav className="site-controls" aria-label="Display controls">
           <Link href="/settings" className="settings-shortcut">
             Settings

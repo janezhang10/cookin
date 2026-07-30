@@ -26,6 +26,7 @@ export function ConfirmationDialog({
   const titleId = useId();
   const descriptionId = useId();
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) {
@@ -33,12 +34,20 @@ export function ConfirmationDialog({
     }
 
     const previousOverflow = document.body.style.overflow;
+    const previouslyFocusedElement = document.activeElement;
 
     document.body.style.overflow = "hidden";
     cancelButtonRef.current?.focus();
 
     return () => {
       document.body.style.overflow = previousOverflow;
+
+      if (
+        previouslyFocusedElement instanceof HTMLElement &&
+        previouslyFocusedElement.isConnected
+      ) {
+        previouslyFocusedElement.focus();
+      }
     };
   }, [open]);
 
@@ -65,6 +74,34 @@ export function ConfirmationDialog({
           if (event.key === "Escape" && !busy) {
             onCancel();
           }
+
+          if (event.key === "Tab") {
+            const buttons = [
+              cancelButtonRef.current,
+              confirmButtonRef.current,
+            ].filter(
+              (button): button is HTMLButtonElement =>
+                button !== null && !button.disabled,
+            );
+            const firstButton = buttons[0];
+            const lastButton = buttons.at(-1);
+
+            if (!firstButton || !lastButton) {
+              event.preventDefault();
+              return;
+            }
+
+            if (event.shiftKey && document.activeElement === firstButton) {
+              event.preventDefault();
+              lastButton.focus();
+            } else if (
+              !event.shiftKey &&
+              document.activeElement === lastButton
+            ) {
+              event.preventDefault();
+              firstButton.focus();
+            }
+          }
         }}
       >
         <h2 id={titleId}>{title}</h2>
@@ -80,6 +117,7 @@ export function ConfirmationDialog({
             {cancelLabel}
           </button>
           <button
+            ref={confirmButtonRef}
             type="button"
             className={
               tone === "danger"
