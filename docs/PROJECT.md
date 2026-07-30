@@ -54,10 +54,12 @@ Currently available:
 - Plain-text and Markdown recipe import with an editable review before saving
 - Local text extraction and import from text-based PDF files
 - One optional locally stored photo per recipe
+- Persistent recipe favorites and favorites filtering
 
 Planned:
 
-- Favorites
+- Dark mode and settings
+- Private authenticated online hosting
 
 ---
 
@@ -118,6 +120,13 @@ Primary deployment target:
 Home server connected through Tailscale.
 
 Future deployment should require minimal configuration changes.
+
+The hosted application must remain private while being available from personal
+devices. Prefer individual authentication, such as a passkey, magic link, or
+trusted identity provider, over one shared site password. Hosting work should
+include HTTPS, authorization on every page and mutation, a managed database,
+durable photo storage, backups, deployment documentation, and an optional
+custom domain. A provider URL can be used before purchasing a domain.
 
 ---
 

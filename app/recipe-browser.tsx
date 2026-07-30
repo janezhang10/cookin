@@ -4,12 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
+import { FavoriteButton } from "@/app/favorite-button";
 import { matchesRecipeSearch, parseSearchTerms } from "@/lib/recipe/search";
 
 interface RecipeSummary {
   id: string;
   title: string;
   slug: string;
+  isFavorite: boolean;
   photoMimeType: string | null;
   tags: {
     tag: {
@@ -27,17 +29,21 @@ interface RecipeSummary {
 export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
   const [query, setQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const normalizedQuery = query.trim().toLowerCase();
   const searchTerms = parseSearchTerms(query);
   const isMultiIngredientSearch = searchTerms.length > 1;
   const searchedRecipes = normalizedQuery
     ? recipes.filter((recipe) => matchesRecipeSearch(recipe, query))
     : recipes;
-  const filteredRecipes = selectedTag
+  const tagFilteredRecipes = selectedTag
     ? searchedRecipes.filter((recipe) =>
         recipe.tags.some(({ tag }) => tag.normalizedName === selectedTag),
       )
     : searchedRecipes;
+  const filteredRecipes = showFavoritesOnly
+    ? tagFilteredRecipes.filter((recipe) => recipe.isFavorite)
+    : tagFilteredRecipes;
   const availableTags = Array.from(
     new Map(
       recipes.flatMap((recipe) =>
@@ -82,14 +88,24 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
       </section>
 
       <section className="recipes">
-        {recipes.length > 0 && availableTags.length > 0 && (
+        {recipes.length > 0 && (
           <div className="tag-filters" aria-label="Filter recipes by tag">
             <button
               type="button"
-              aria-pressed={selectedTag === null}
-              onClick={() => setSelectedTag(null)}
+              aria-pressed={selectedTag === null && !showFavoritesOnly}
+              onClick={() => {
+                setSelectedTag(null);
+                setShowFavoritesOnly(false);
+              }}
             >
               All
+            </button>
+            <button
+              type="button"
+              aria-pressed={showFavoritesOnly}
+              onClick={() => setShowFavoritesOnly((current) => !current)}
+            >
+              ★ Favorites
             </button>
             {availableTags.map((tag) => (
               <button
@@ -132,6 +148,7 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               onClick={() => {
                 setQuery("");
                 setSelectedTag(null);
+                setShowFavoritesOnly(false);
               }}
             >
               Clear filters
@@ -147,18 +164,22 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
                     isMultiIngredientSearch
                       ? " with all listed ingredients"
                       : ""
-                  }${selectedTag ? " in this tag" : ""}`
-                : selectedTag
+                  }${showFavoritesOnly ? " among favorites" : ""}${
+                    selectedTag ? " in this tag" : ""
+                  }`
+                : selectedTag || showFavoritesOnly
                   ? `${filteredRecipes.length} ${
+                      showFavoritesOnly ? "favorite " : ""
+                    }${
                       filteredRecipes.length === 1 ? "recipe" : "recipes"
-                    } in this tag`
+                    }${selectedTag ? " in this tag" : ""}`
                   : `${recipes.length} ${
                       recipes.length === 1 ? "recipe" : "recipes"
                     }`}
             </p>
             <ul className="recipe-list">
               {filteredRecipes.map((recipe) => (
-                <li key={recipe.id}>
+                <li className="recipe-card-shell" key={recipe.id}>
                   <Link href={`/recipe/${recipe.slug}`} className="recipe-card">
                     {recipe.photoMimeType && (
                       <Image
@@ -189,6 +210,12 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
                       )}
                     </div>
                   </Link>
+                  <FavoriteButton
+                    recipeId={recipe.id}
+                    slug={recipe.slug}
+                    isFavorite={recipe.isFavorite}
+                    compact
+                  />
                 </li>
               ))}
             </ul>

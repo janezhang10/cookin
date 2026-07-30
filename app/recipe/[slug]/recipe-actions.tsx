@@ -4,16 +4,19 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 
 import { ConfirmationDialog } from "@/app/confirmation-dialog";
+import { FavoriteButton } from "@/app/favorite-button";
 import { deleteRecipeAction } from "@/lib/recipe/actions";
 
 export function RecipeActions({
   recipeId,
   slug,
   title,
+  isFavorite,
 }: {
   recipeId: string;
   slug: string;
   title: string;
+  isFavorite: boolean;
 }) {
   const deleteAction = deleteRecipeAction.bind(null, recipeId);
   const formRef = useRef<HTMLFormElement>(null);
@@ -22,6 +25,7 @@ export function RecipeActions({
 
   return (
     <div className="recipe-management">
+      <FavoriteButton recipeId={recipeId} slug={slug} isFavorite={isFavorite} />
       <Link href={`/recipe/${slug}/edit`} className="secondary-button">
         Edit
       </Link>

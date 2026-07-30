@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createRecipe } from "@/lib/recipe/create";
 import { deleteRecipe } from "@/lib/recipe/delete";
+import { toggleRecipeFavorite } from "@/lib/recipe/toggleFavorite";
 import { updateRecipe } from "@/lib/recipe/update";
 import { createRecipeSchema } from "@/lib/validation/recipe";
 import type { RecipePhotoUpdate } from "@/lib/recipe/types";
@@ -222,4 +223,15 @@ export async function deleteRecipeAction(
   await deleteRecipe(recipeId);
   revalidatePath("/");
   redirect("/");
+}
+
+export async function toggleRecipeFavoriteAction(
+  recipeId: string,
+  slug: string,
+  _formData: FormData,
+) {
+  void _formData;
+  await toggleRecipeFavorite(recipeId);
+  revalidatePath("/");
+  revalidatePath(`/recipe/${slug}`);
 }

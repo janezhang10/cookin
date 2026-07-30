@@ -42,6 +42,7 @@ export default async function RecipePage({
           recipeId={recipe.id}
           slug={recipe.slug}
           title={recipe.title}
+          isFavorite={recipe.isFavorite}
         />
       </header>
 

@@ -16,6 +16,7 @@ model Recipe {
   id            String  @id @default(cuid())
   title         String
   slug          String  @unique
+  isFavorite    Boolean @default(false)
   photoData     Bytes?
   photoMimeType String?
 

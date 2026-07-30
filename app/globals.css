@@ -141,6 +141,10 @@ a {
   gap: 1rem;
 }
 
+.recipe-card-shell {
+  position: relative;
+}
+
 .recipe-card {
   display: block;
 
@@ -177,6 +181,66 @@ a {
   border-color: #d1d5db;
 
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.favorite-form {
+  margin: 0;
+}
+
+.recipe-card-shell > .favorite-form {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.favorite-button span {
+  color: #c58a19;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.favorite-button:hover {
+  border-color: #dfc17b;
+  color: var(--text);
+}
+
+.favorite-button[aria-pressed="true"] {
+  border-color: #e4c66e;
+  background: #fff9e8;
+  color: #765413;
+}
+
+.favorite-button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.favorite-button-compact {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 10px rgba(31, 41, 55, 0.12);
+  backdrop-filter: blur(6px);
 }
 
 .recipe-card h2 {
@@ -363,7 +427,7 @@ a {
   gap: 0.9rem;
 }
 
-.recipe-management form {
+.recipe-management form:not(.favorite-form) {
   margin: 0;
 }
 

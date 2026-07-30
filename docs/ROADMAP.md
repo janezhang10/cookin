@@ -64,6 +64,22 @@
 ## Phase 6 — Polish
 
 - [x] Photos
+- [x] Favorites
 - [ ] Dark mode
 - [ ] Settings
 - [ ] Accessibility improvements
+
+---
+
+## Phase 7 — Private Online Hosting
+
+- [ ] Compare simple hosting providers and expected cost
+- [ ] Decide whether to buy a custom domain
+- [ ] Choose an individual sign-in method
+- [ ] Protect every page and data-changing action with authorization
+- [ ] Move SQLite data to a managed production database
+- [ ] Move recipe photos to durable object storage
+- [ ] Configure HTTPS and prevent search indexing
+- [ ] Add automated backups and a restore procedure
+- [ ] Deploy the private site and test access from personal devices
+- [ ] Document ongoing updates and maintenance

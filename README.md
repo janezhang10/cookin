@@ -13,6 +13,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Import a structured plain-text or Markdown recipe and review it before saving
 - Extract and import recipes from text-based PDF files
 - Add, replace, or remove a photo for each recipe
+- Favorite recipes and filter the collection to favorites
 - Markdown instructions
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4
