@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { getRecipeBySlug } from "@/lib/recipe/get";
@@ -43,6 +44,19 @@ export default async function RecipePage({
           title={recipe.title}
         />
       </header>
+
+      {recipe.photoMimeType && (
+        <Image
+          className="recipe-hero-photo"
+          src={`/api/recipe/${recipe.id}/photo`}
+          alt={recipe.title}
+          width={1200}
+          height={800}
+          sizes="(max-width: 760px) 100vw, 760px"
+          unoptimized
+          priority
+        />
+      )}
 
       <RecipeContent
         title={recipe.title}

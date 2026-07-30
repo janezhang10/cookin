@@ -14,3 +14,10 @@ export interface CreateRecipeInput {
   ingredients: CreateRecipeIngredientInput[];
   steps: CreateRecipeStepInput[];
 }
+
+export interface RecipePhotoInput {
+  data: Uint8Array<ArrayBuffer>;
+  mimeType: "image/jpeg" | "image/png" | "image/webp";
+}
+
+export type RecipePhotoUpdate = RecipePhotoInput | null | undefined;

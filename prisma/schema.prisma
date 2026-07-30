@@ -13,9 +13,11 @@ datasource db {
 }
 
 model Recipe {
-  id    String @id @default(cuid())
-  title String
-  slug  String @unique
+  id            String  @id @default(cuid())
+  title         String
+  slug          String  @unique
+  photoData     Bytes?
+  photoMimeType String?
 
   ingredients RecipeIngredient[]
   steps       RecipeStep[]
@@ -47,7 +49,7 @@ model RecipeTag {
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   tagId String
-  tag   Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   displayOrder Int
 
@@ -94,7 +96,7 @@ model RecipeIngredient {
   quantity Float?
 
   unitId String?
-  unit   Unit? @relation(fields: [unitId], references: [id])
+  unit   Unit?   @relation(fields: [unitId], references: [id])
 
   preparation String?
 

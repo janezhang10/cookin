@@ -46,6 +46,7 @@ export interface RecipeFormDraftData {
 export interface RecipeFormInitialData extends RecipeFormDraftData {
   id: string;
   slug: string;
+  hasPhoto: boolean;
 }
 
 const emptyIngredient = (id: number): IngredientRow => ({
@@ -88,7 +89,13 @@ export function RecipeForm({
   const [steps, setSteps] = useState<StepRow[]>(initialSteps);
   const [title, setTitle] = useState(sourceRecipe?.title ?? "");
   const [tags, setTags] = useState(sourceRecipe?.tags.join(", ") ?? "");
+  const initialPhotoStatus = initialRecipe?.hasPhoto ? "existing" : "none";
+  const [photoStatus, setPhotoStatus] = useState<
+    "none" | "existing" | "selected" | "removed"
+  >(initialPhotoStatus);
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
   const [discardTarget, setDiscardTarget] = useState<string | null>(null);
+  const photoInput = useRef<HTMLInputElement | null>(null);
   const nextIngredientId = useRef(initialIngredients.length);
   const nextStepId = useRef(initialSteps.length);
   const allowNavigation = useRef(false);
@@ -96,6 +103,7 @@ export function RecipeForm({
     JSON.stringify({
       title: initialRecipe?.title ?? "",
       tags: initialRecipe?.tags.join(", ") ?? "",
+      photoStatus: initialPhotoStatus,
       ingredients: initialRecipe
         ? initialIngredients.map(({ quantity, unitId, ingredient }) => ({
             quantity,
@@ -130,6 +138,7 @@ export function RecipeForm({
   const currentDraft = JSON.stringify({
     title,
     tags,
+    photoStatus,
     ingredients: ingredients.map(({ quantity, unitId, ingredient }) => ({
       quantity,
       unitId,
@@ -138,6 +147,15 @@ export function RecipeForm({
     steps: steps.map(({ text }) => ({ text })),
   });
   const isDirty = currentDraft !== initialDraft;
+
+  useEffect(
+    () => () => {
+      if (photoPreviewUrl) {
+        URL.revokeObjectURL(photoPreviewUrl);
+      }
+    },
+    [photoPreviewUrl],
+  );
 
   useEffect(() => {
     if (!isDirty) {
@@ -300,6 +318,87 @@ export function RecipeForm({
         />
         <p className="form-help">Separate tags with commas.</p>
       </div>
+
+      <section className="form-section" aria-labelledby="photo-heading">
+        <div className="section-heading">
+          <div>
+            <h2 id="photo-heading">Photo</h2>
+            <p>Optional. Use a JPEG, PNG, or WebP image up to 4 MB.</p>
+          </div>
+        </div>
+
+        {(photoStatus === "existing" ||
+          (photoStatus === "selected" && photoPreviewUrl)) && (
+          <div className="recipe-photo-editor">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={
+                photoStatus === "selected"
+                  ? (photoPreviewUrl ?? "")
+                  : `/api/recipe/${initialRecipe?.id}/photo`
+              }
+              alt={`Preview for ${title.trim() || "this recipe"}`}
+            />
+            <button
+              type="button"
+              className="danger-button"
+              onClick={() => {
+                if (photoInput.current) {
+                  photoInput.current.value = "";
+                }
+
+                setPhotoPreviewUrl(null);
+                setPhotoStatus(initialRecipe?.hasPhoto ? "removed" : "none");
+              }}
+            >
+              Remove photo
+            </button>
+          </div>
+        )}
+
+        {photoStatus === "removed" && initialRecipe?.hasPhoto && (
+          <div className="photo-removal-notice">
+            <span>The current photo will be removed when you save.</span>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setPhotoStatus("existing")}
+            >
+              Keep photo
+            </button>
+          </div>
+        )}
+
+        <div className="form-field">
+          <label htmlFor="photo">
+            {initialRecipe?.hasPhoto ? "Replace photo" : "Choose photo"}
+          </label>
+          <input
+            ref={photoInput}
+            id="photo"
+            name="photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+
+              if (!file) {
+                setPhotoPreviewUrl(null);
+                setPhotoStatus(initialRecipe?.hasPhoto ? "existing" : "none");
+                return;
+              }
+
+              setPhotoPreviewUrl(URL.createObjectURL(file));
+              setPhotoStatus("selected");
+            }}
+          />
+        </div>
+        <input
+          type="hidden"
+          name="removePhoto"
+          value={photoStatus === "removed" ? "true" : "false"}
+        />
+      </section>
 
       <section className="form-section" aria-labelledby="ingredients-heading">
         <div className="section-heading">

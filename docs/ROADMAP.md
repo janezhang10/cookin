@@ -63,7 +63,7 @@
 
 ## Phase 6 — Polish
 
-- [ ] Photos
+- [x] Photos
 - [ ] Dark mode
 - [ ] Settings
 - [ ] Accessibility improvements

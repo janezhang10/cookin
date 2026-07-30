@@ -34,6 +34,7 @@ export default async function EditRecipePage({
         initialRecipe={{
           id: recipe.id,
           slug: recipe.slug,
+          hasPhoto: recipe.photoMimeType !== null,
           title: recipe.title,
           tags: recipe.tags.map(({ tag }) => tag.name),
           ingredients: recipe.ingredients.map((item) => ({

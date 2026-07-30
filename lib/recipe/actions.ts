@@ -7,6 +7,7 @@ import { createRecipe } from "@/lib/recipe/create";
 import { deleteRecipe } from "@/lib/recipe/delete";
 import { updateRecipe } from "@/lib/recipe/update";
 import { createRecipeSchema } from "@/lib/validation/recipe";
+import type { RecipePhotoUpdate } from "@/lib/recipe/types";
 
 export interface RecipeActionState {
   errors: string[];
@@ -75,20 +76,100 @@ function parseRecipeForm(formData: FormData) {
   };
 }
 
+const maximumPhotoSize = 4 * 1024 * 1024;
+
+function detectPhotoMimeType(
+  bytes: Uint8Array,
+): "image/jpeg" | "image/png" | "image/webp" | null {
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return "image/jpeg";
+  }
+
+  if (
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47 &&
+    bytes[4] === 0x0d &&
+    bytes[5] === 0x0a &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+
+  if (
+    String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
+    String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
+  ) {
+    return "image/webp";
+  }
+
+  return null;
+}
+
+async function parseRecipePhoto(
+  formData: FormData,
+): Promise<
+  | { success: true; photo: RecipePhotoUpdate }
+  | { success: false; errors: string[] }
+> {
+  if (formData.get("removePhoto") === "true") {
+    return { success: true, photo: null };
+  }
+
+  const file = formData.get("photo");
+
+  if (!(file instanceof File) || file.size === 0) {
+    return { success: true, photo: undefined };
+  }
+
+  if (file.size > maximumPhotoSize) {
+    return {
+      success: false,
+      errors: ["Choose a recipe photo smaller than 4 MB."],
+    };
+  }
+
+  const data = new Uint8Array(await file.arrayBuffer());
+  const mimeType = detectPhotoMimeType(data);
+
+  if (!mimeType) {
+    return {
+      success: false,
+      errors: ["Recipe photos must be JPEG, PNG, or WebP files."],
+    };
+  }
+
+  return {
+    success: true,
+    photo: {
+      data,
+      mimeType,
+    },
+  };
+}
+
 export async function createRecipeAction(
   _previousState: RecipeActionState,
   formData: FormData,
 ): Promise<RecipeActionState> {
   const parsed = parseRecipeForm(formData);
+  const parsedPhoto = await parseRecipePhoto(formData);
 
-  if (!parsed.success) {
-    return { errors: parsed.errors };
+  if (!parsed.success || !parsedPhoto.success) {
+    return {
+      errors: [
+        ...(parsed.success ? [] : parsed.errors),
+        ...(parsedPhoto.success ? [] : parsedPhoto.errors),
+      ],
+    };
   }
 
   let recipe;
 
   try {
-    recipe = await createRecipe(parsed.data);
+    recipe = await createRecipe(parsed.data, parsedPhoto.photo ?? null);
   } catch {
     return {
       errors: ["The recipe could not be saved. Please try again."],
@@ -106,15 +187,21 @@ export async function updateRecipeAction(
   formData: FormData,
 ): Promise<RecipeActionState> {
   const parsed = parseRecipeForm(formData);
+  const parsedPhoto = await parseRecipePhoto(formData);
 
-  if (!parsed.success) {
-    return { errors: parsed.errors };
+  if (!parsed.success || !parsedPhoto.success) {
+    return {
+      errors: [
+        ...(parsed.success ? [] : parsed.errors),
+        ...(parsedPhoto.success ? [] : parsedPhoto.errors),
+      ],
+    };
   }
 
   let recipe;
 
   try {
-    recipe = await updateRecipe(recipeId, parsed.data);
+    recipe = await updateRecipe(recipeId, parsed.data, parsedPhoto.photo);
   } catch {
     return {
       errors: ["The recipe could not be updated. Please try again."],

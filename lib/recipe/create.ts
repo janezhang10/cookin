@@ -4,9 +4,12 @@ import { findOrCreateTag } from "@/lib/tag/findOrCreate";
 
 import { generateSlug } from "./slug";
 import { recipeInclude } from "./include";
-import type { CreateRecipeInput } from "./types";
+import type { CreateRecipeInput, RecipePhotoInput } from "./types";
 
-export async function createRecipe(input: CreateRecipeInput) {
+export async function createRecipe(
+  input: CreateRecipeInput,
+  photo: RecipePhotoInput | null,
+) {
   const slug = await generateSlug(input.title);
 
   return prisma.$transaction(async (tx) => {
@@ -14,6 +17,8 @@ export async function createRecipe(input: CreateRecipeInput) {
       data: {
         title: input.title.trim(),
         slug,
+        photoData: photo?.data ?? null,
+        photoMimeType: photo?.mimeType ?? null,
       },
     });
 

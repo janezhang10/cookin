@@ -6,6 +6,7 @@ export async function listRecipes() {
       id: true,
       title: true,
       slug: true,
+      photoMimeType: true,
       tags: {
         select: {
           tag: {

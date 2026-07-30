@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 import { matchesRecipeSearch, parseSearchTerms } from "@/lib/recipe/search";
@@ -9,6 +10,7 @@ interface RecipeSummary {
   id: string;
   title: string;
   slug: string;
+  photoMimeType: string | null;
   tags: {
     tag: {
       name: string;
@@ -158,21 +160,34 @@ export function RecipeBrowser({ recipes }: { recipes: RecipeSummary[] }) {
               {filteredRecipes.map((recipe) => (
                 <li key={recipe.id}>
                   <Link href={`/recipe/${recipe.slug}`} className="recipe-card">
-                    <h2>{recipe.title}</h2>
-                    <p>
-                      {recipe.ingredients
-                        .map(({ ingredient }) => ingredient.name)
-                        .join(", ")}
-                    </p>
-                    {recipe.tags.length > 0 && (
-                      <div className="recipe-card-tags">
-                        {recipe.tags.map(({ tag }) => (
-                          <span className="tag-chip" key={tag.normalizedName}>
-                            {tag.name}
-                          </span>
-                        ))}
-                      </div>
+                    {recipe.photoMimeType && (
+                      <Image
+                        className="recipe-card-photo"
+                        src={`/api/recipe/${recipe.id}/photo`}
+                        alt=""
+                        width={720}
+                        height={405}
+                        sizes="(max-width: 760px) 100vw, 720px"
+                        unoptimized
+                      />
                     )}
+                    <div className="recipe-card-content">
+                      <h2>{recipe.title}</h2>
+                      <p>
+                        {recipe.ingredients
+                          .map(({ ingredient }) => ingredient.name)
+                          .join(", ")}
+                      </p>
+                      {recipe.tags.length > 0 && (
+                        <div className="recipe-card-tags">
+                          {recipe.tags.map(({ tag }) => (
+                            <span className="tag-chip" key={tag.normalizedName}>
+                              {tag.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </Link>
                 </li>
               ))}
