@@ -46,7 +46,7 @@
 
 - [x] Plain text import
 - [x] Markdown import
-- [ ] PDF import
+- [x] PDF import
 - [x] Parsing review screen
 
 ---

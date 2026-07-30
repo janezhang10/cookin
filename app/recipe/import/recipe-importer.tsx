@@ -27,6 +27,8 @@ const exampleRecipe = `# Chicken Soup
 
 export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
   const [text, setText] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [extractingPdf, setExtractingPdf] = useState(false);
   const [draft, setDraft] = useState<RecipeFormDraftData | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
   const [parseVersion, setParseVersion] = useState(0);
@@ -80,8 +82,8 @@ export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
     );
   }
 
-  function parseRecipe() {
-    const result = parsePlainTextRecipe(text, units);
+  function reviewRecipe(recipeText: string) {
+    const result = parsePlainTextRecipe(recipeText, units);
 
     if (!result.success) {
       setMessages(result.errors);
@@ -93,8 +95,81 @@ export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
     setParseVersion((version) => version + 1);
   }
 
+  async function importPdf() {
+    if (!pdfFile) {
+      return;
+    }
+
+    setExtractingPdf(true);
+    setMessages([]);
+
+    try {
+      const formData = new FormData();
+      formData.set("pdf", pdfFile);
+      const response = await fetch("/api/recipe/import-pdf", {
+        method: "POST",
+        body: formData,
+      });
+      const result = (await response.json()) as {
+        text?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !result.text) {
+        setMessages([result.error ?? "The PDF could not be imported."]);
+        return;
+      }
+
+      setText(result.text);
+      reviewRecipe(result.text);
+    } catch {
+      setMessages(["The PDF could not be imported. Please try again."]);
+    } finally {
+      setExtractingPdf(false);
+    }
+  }
+
   return (
     <section className="import-panel">
+      <div className="pdf-import-panel">
+        <div>
+          <h2>Import a PDF</h2>
+          <p>
+            Text-based PDFs up to 8 MB work best. The file is read locally and
+            is not stored.
+          </p>
+        </div>
+        <div className="pdf-import-controls">
+          <label htmlFor="recipe-pdf" className="sr-only">
+            Recipe PDF
+          </label>
+          <input
+            id="recipe-pdf"
+            type="file"
+            accept="application/pdf,.pdf"
+            onChange={(event) => {
+              setPdfFile(event.target.files?.[0] ?? null);
+              setMessages([]);
+            }}
+          />
+          <button
+            type="button"
+            className="button compact-button"
+            disabled={!pdfFile || extractingPdf}
+            onClick={importPdf}
+          >
+            {extractingPdf ? "Reading PDF…" : "Import PDF"}
+          </button>
+        </div>
+        <p className="form-help">
+          Scanned or photographed recipes need OCR and are not supported yet.
+        </p>
+      </div>
+
+      <div className="import-divider">
+        <span>or paste recipe text</span>
+      </div>
+
       <div className="form-field">
         <label htmlFor="recipe-text">Recipe text</label>
         <textarea
@@ -136,7 +211,7 @@ export function RecipeImporter({ units }: { units: ImportUnitOption[] }) {
           type="button"
           className="button"
           disabled={!text.trim()}
-          onClick={parseRecipe}
+          onClick={() => reviewRecipe(text)}
         >
           Review recipe
         </button>

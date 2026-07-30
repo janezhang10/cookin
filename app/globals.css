@@ -577,6 +577,65 @@ a {
   gap: 1.5rem;
 }
 
+.pdf-import-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.pdf-import-panel h2,
+.pdf-import-panel p {
+  margin: 0;
+}
+
+.pdf-import-panel h2 {
+  font-size: 1.2rem;
+}
+
+.pdf-import-panel > div > p {
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pdf-import-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pdf-import-controls input {
+  min-width: 0;
+  flex: 1;
+  font: inherit;
+}
+
+.pdf-import-controls .button {
+  white-space: nowrap;
+}
+
+.import-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.import-divider::before,
+.import-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+
 .import-textarea {
   min-height: 320px;
   padding: 1rem;
@@ -610,7 +669,11 @@ a {
   overflow-x: auto;
   margin: 1rem 0 0;
   color: var(--muted);
-  font: 0.9rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font:
+    0.9rem/1.55 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
   white-space: pre-wrap;
 }
 
@@ -1254,6 +1317,11 @@ a {
   }
 
   .import-review-heading {
+    flex-direction: column;
+  }
+
+  .pdf-import-controls {
+    align-items: stretch;
     flex-direction: column;
   }
 

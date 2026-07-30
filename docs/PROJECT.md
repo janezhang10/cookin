@@ -52,12 +52,13 @@ Currently available:
 - Cooking unit converter with approximate ingredient-density presets
 - Unsaved-change protection and styled destructive confirmations
 - Plain-text and Markdown recipe import with an editable review before saving
+- Local text extraction and import from text-based PDF files
 
 Planned:
 
 - Recipe photos
 - Favorites
-- Import recipes from PDF
+- Recipe photos
 
 ---
 
