@@ -139,32 +139,57 @@ html {
   color: var(--text);
 }
 
+:root[data-text-size="large"] {
+  font-size: 112.5%;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
   background: var(--background);
 }
 
-.theme-toggle {
+.site-controls {
   position: fixed;
   z-index: 900;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.settings-shortcut,
+.theme-toggle {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.settings-shortcut {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.theme-toggle {
   display: grid;
   place-items: center;
   width: 42px;
   height: 42px;
   padding: 0;
-  border: 1px solid var(--border);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  color: var(--text);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
   cursor: pointer;
   font: inherit;
 }
 
+.settings-shortcut:hover,
 .theme-toggle:hover {
   border-color: var(--accent-border);
   color: var(--accent-hover);
@@ -189,6 +214,7 @@ body {
   display: none;
 }
 
+.settings-shortcut:focus-visible,
 .theme-toggle:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 24%, transparent);
   outline-offset: 3px;
@@ -573,6 +599,106 @@ a {
 .page-header p {
   margin: 0.75rem 0 0;
   color: var(--muted);
+}
+
+.settings-page {
+  max-width: 760px;
+}
+
+.settings-sections {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.settings-section {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.settings-section-heading {
+  margin-bottom: 1.1rem;
+}
+
+.settings-section-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.settings-section-heading p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.settings-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.75rem;
+}
+
+.settings-option {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 78px;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.settings-option:hover {
+  border-color: var(--accent-border);
+  background: var(--surface-hover);
+}
+
+.settings-option[aria-pressed="true"] {
+  border-color: var(--accent-soft-border);
+  background: var(--accent-soft);
+  color: var(--accent-soft-text);
+}
+
+.settings-option:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
+.settings-option span {
+  font-weight: 700;
+}
+
+.settings-option small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.settings-option[aria-pressed="true"] small {
+  color: inherit;
+}
+
+.settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 0.25rem;
+}
+
+.settings-footer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.settings-footer .text-button {
+  white-space: nowrap;
 }
 
 .recipe-title-row {
@@ -1586,7 +1712,7 @@ a {
 }
 
 @media (max-width: 640px) {
-  .theme-toggle {
+  .site-controls {
     top: 0.75rem;
     right: 0.75rem;
   }
@@ -1596,6 +1722,11 @@ a {
   }
 
   .section-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .settings-footer {
     align-items: start;
     flex-direction: column;
   }

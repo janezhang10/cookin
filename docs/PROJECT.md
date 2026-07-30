@@ -56,10 +56,11 @@ Currently available:
 - One optional locally stored photo per recipe
 - Persistent recipe favorites and favorites filtering
 - Device-aware dark mode with a remembered local preference
+- Device-local theme and text-size settings
 
 Planned:
 
-- Settings
+- Accessibility improvements
 - Private authenticated online hosting
 
 ---

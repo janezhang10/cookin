@@ -28,6 +28,8 @@ export function ThemeToggle() {
         try {
           localStorage.setItem("cookin-theme", nextTheme);
         } catch {}
+
+        window.dispatchEvent(new Event("cookin-settings-change"));
       }}
     >
       <span className="theme-icon-for-light" aria-hidden="true">

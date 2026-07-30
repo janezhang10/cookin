@@ -1,5 +1,7 @@
 import "./globals.css";
 
+import Link from "next/link";
+
 import { ThemeToggle } from "./theme-toggle";
 
 const themeScript = `
@@ -7,6 +9,11 @@ const themeScript = `
     const theme = localStorage.getItem("cookin-theme");
     if (theme === "light" || theme === "dark") {
       document.documentElement.dataset.theme = theme;
+    }
+
+    const textSize = localStorage.getItem("cookin-text-size");
+    if (textSize === "large") {
+      document.documentElement.dataset.textSize = textSize;
     }
   } catch {}
 `;
@@ -22,7 +29,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <ThemeToggle />
+        <nav className="site-controls" aria-label="Display controls">
+          <Link href="/settings" className="settings-shortcut">
+            Settings
+          </Link>
+          <ThemeToggle />
+        </nav>
         {children}
       </body>
     </html>

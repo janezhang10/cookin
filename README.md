@@ -15,6 +15,7 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Add, replace, or remove a photo for each recipe
 - Favorite recipes and filter the collection to favorites
 - Use a remembered light or dark color theme
+- Choose a theme and comfortable text size in Settings
 - Markdown instructions
 - Ingredient references with quantities inside instructions
 - Divide ingredient quantities by 1, 2, 3, or 4
