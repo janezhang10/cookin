@@ -30,6 +30,19 @@ interface StepRow {
   text: string;
 }
 
+interface NavigationApi {
+  addEventListener(type: "navigate", listener: (event: Event) => void): void;
+  removeEventListener(type: "navigate", listener: (event: Event) => void): void;
+}
+
+interface NavigationEventWithIntercept extends Event {
+  canIntercept: boolean;
+  navigationType: "push" | "reload" | "replace" | "traverse";
+  hashChange: boolean;
+  downloadRequest: string | null;
+  intercept(options: { precommitHandler: () => Promise<void> }): void;
+}
+
 export interface RecipeFormDraftData {
   title: string;
   tags: string[];
@@ -95,10 +108,15 @@ export function RecipeForm({
   >(initialPhotoStatus);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
   const [discardTarget, setDiscardTarget] = useState<string | null>(null);
+  const [historyNavigationPending, setHistoryNavigationPending] =
+    useState(false);
   const photoInput = useRef<HTMLInputElement | null>(null);
   const nextIngredientId = useRef(initialIngredients.length);
   const nextStepId = useRef(initialSteps.length);
   const allowNavigation = useRef(false);
+  const historyDecision = useRef<((discardChanges: boolean) => void) | null>(
+    null,
+  );
   const [initialDraft] = useState(() =>
     JSON.stringify({
       title: initialRecipe?.title ?? "",
@@ -209,12 +227,54 @@ export function RecipeForm({
       );
     }
 
+    const navigation = (
+      window as typeof window & {
+        navigation?: NavigationApi;
+      }
+    ).navigation;
+
+    function handleHistoryNavigation(rawEvent: Event) {
+      const event = rawEvent as NavigationEventWithIntercept;
+
+      if (
+        allowNavigation.current ||
+        historyDecision.current ||
+        event.navigationType !== "traverse" ||
+        !event.canIntercept ||
+        !event.cancelable ||
+        event.hashChange ||
+        event.downloadRequest !== null
+      ) {
+        return;
+      }
+
+      event.intercept({
+        precommitHandler: () =>
+          new Promise<void>((resolve, reject) => {
+            historyDecision.current = (discardChanges) => {
+              historyDecision.current = null;
+              setHistoryNavigationPending(false);
+
+              if (discardChanges) {
+                resolve();
+              } else {
+                reject(new DOMException("Navigation canceled.", "AbortError"));
+              }
+            };
+            setHistoryNavigationPending(true);
+          }),
+      });
+    }
+
     window.addEventListener("beforeunload", handleBeforeUnload);
     document.addEventListener("click", handleDocumentClick, true);
+    navigation?.addEventListener("navigate", handleHistoryNavigation);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       document.removeEventListener("click", handleDocumentClick, true);
+      navigation?.removeEventListener("navigate", handleHistoryNavigation);
+      historyDecision.current?.(false);
     };
   }, [isDirty]);
 
@@ -619,14 +679,26 @@ export function RecipeForm({
       </div>
 
       <ConfirmationDialog
-        open={discardTarget !== null}
+        open={discardTarget !== null || historyNavigationPending}
         title="Discard your changes?"
         description="Your unsaved recipe changes will be lost."
         confirmLabel="Discard changes"
         cancelLabel="Keep editing"
         tone="danger"
-        onCancel={() => setDiscardTarget(null)}
+        onCancel={() => {
+          if (historyNavigationPending) {
+            historyDecision.current?.(false);
+            return;
+          }
+
+          setDiscardTarget(null);
+        }}
         onConfirm={() => {
+          if (historyNavigationPending) {
+            historyDecision.current?.(true);
+            return;
+          }
+
           if (!discardTarget) {
             return;
           }
