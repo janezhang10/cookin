@@ -55,10 +55,11 @@ Currently available:
 - Local text extraction and import from text-based PDF files
 - One optional locally stored photo per recipe
 - Persistent recipe favorites and favorites filtering
+- Device-aware dark mode with a remembered local preference
 
 Planned:
 
-- Dark mode and settings
+- Settings
 - Private authenticated online hosting
 
 ---

@@ -65,7 +65,7 @@
 
 - [x] Photos
 - [x] Favorites
-- [ ] Dark mode
+- [x] Dark mode
 - [ ] Settings
 - [ ] Accessibility improvements
 
