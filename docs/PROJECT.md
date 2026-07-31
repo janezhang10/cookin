@@ -122,14 +122,19 @@ Primary deployment target:
 
 Home server connected through Tailscale.
 
-Future deployment should require minimal configuration changes.
+The initial deployment will use Tailscale Serve and its private `.ts.net` HTTPS
+address. Tailscale identity will gate access before traffic reaches the
+application, so a shared application password and custom domain are not needed.
+The first deployment will retain SQLite and database-backed photos to avoid an
+unnecessary data migration.
 
 The hosted application must remain private while being available from personal
-devices. Prefer individual authentication, such as a passkey, magic link, or
-trusted identity provider, over one shared site password. Hosting work should
-include HTTPS, authorization on every page and mutation, a managed database,
-durable photo storage, backups, deployment documentation, and an optional
-custom domain. A provider URL can be used before purchasing a domain.
+devices. The application will listen only on localhost and will be reachable
+through Tailscale Serve, not Tailscale Funnel. Hosting work includes private
+HTTPS, authorization on every page and mutation, automated SQLite backups,
+restore testing, and deployment documentation. A managed database, object
+storage, and application-level sign-in remain fallback options if Cookin later
+moves to a public cloud host.
 
 ---
 

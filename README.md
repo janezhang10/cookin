@@ -42,3 +42,4 @@ the local `dev.db` file.
 ## Documentation
 
 See `docs/` for the project specification, architecture, schema, and roadmap.
+The private deployment recommendation is in `docs/HOSTING.md`.

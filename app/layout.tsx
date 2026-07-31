@@ -1,8 +1,18 @@
 import "./globals.css";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ThemeToggle } from "./theme-toggle";
+
+export const metadata: Metadata = {
+  title: "Cookin",
+  description: "A private personal recipe collection.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const themeScript = `
   try {

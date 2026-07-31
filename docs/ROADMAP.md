@@ -73,13 +73,14 @@
 
 ## Phase 7 — Private Online Hosting
 
-- [ ] Compare simple hosting providers and expected cost
-- [ ] Decide whether to buy a custom domain
-- [ ] Choose an individual sign-in method
+- [x] Compare simple hosting providers and expected cost
+- [x] Use the included `.ts.net` address instead of buying a domain initially
+- [x] Use Tailscale user and device identity for private access
+- [x] Prevent search indexing
+- [ ] Choose the always-on home computer
 - [ ] Protect every page and data-changing action with authorization
-- [ ] Move SQLite data to a managed production database
-- [ ] Move recipe photos to durable object storage
-- [ ] Configure HTTPS and prevent search indexing
+- [ ] Move SQLite and recipe photos to a dedicated server data directory
+- [ ] Configure private HTTPS with Tailscale Serve
 - [ ] Add automated backups and a restore procedure
 - [ ] Deploy the private site and test access from personal devices
 - [ ] Document ongoing updates and maintenance
