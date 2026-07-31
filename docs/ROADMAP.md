@@ -74,13 +74,12 @@
 ## Phase 7 — Private Online Hosting
 
 - [x] Compare simple hosting providers and expected cost
-- [x] Use the included `.ts.net` address instead of buying a domain initially
-- [x] Use Tailscale user and device identity for private access
+- [x] Use an included hosted address instead of buying a domain initially
+- [x] Select managed hosting instead of an always-on home computer
+- [x] Move recipe records to Cloudflare D1
+- [x] Move recipe photos to Cloudflare R2
+- [x] Configure owner-only site access
 - [x] Prevent search indexing
-- [ ] Choose the always-on home computer
-- [ ] Protect every page and data-changing action with authorization
-- [ ] Move SQLite and recipe photos to a dedicated server data directory
-- [ ] Configure private HTTPS with Tailscale Serve
 - [ ] Add automated backups and a restore procedure
 - [ ] Deploy the private site and test access from personal devices
 - [ ] Document ongoing updates and maintenance

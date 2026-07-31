@@ -1,20 +1,25 @@
-import { prisma } from "@/lib/db/client";
+import { eq } from "drizzle-orm";
+
+import { recipes } from "@/db/schema";
+import { getDb } from "@/lib/db/client";
 
 export async function toggleRecipeFavorite(recipeId: string) {
-  return prisma.$transaction(async (tx) => {
-    const recipe = await tx.recipe.findUnique({
-      where: { id: recipeId },
-      select: { isFavorite: true },
-    });
+  const db = await getDb();
+  const [recipe] = await db
+    .select({ isFavorite: recipes.isFavorite })
+    .from(recipes)
+    .where(eq(recipes.id, recipeId))
+    .limit(1);
 
-    if (!recipe) {
-      return null;
-    }
+  if (!recipe) {
+    return null;
+  }
 
-    return tx.recipe.update({
-      where: { id: recipeId },
-      data: { isFavorite: !recipe.isFavorite },
-      select: { isFavorite: true },
-    });
-  });
+  const isFavorite = !recipe.isFavorite;
+  await db
+    .update(recipes)
+    .set({ isFavorite, updatedAt: new Date().toISOString() })
+    .where(eq(recipes.id, recipeId));
+
+  return { isFavorite };
 }

@@ -6,8 +6,13 @@ It is intentionally implementation-agnostic. The Prisma schema should be conside
 
 ## Current Implementation
 
-The local application uses SQLite through Prisma. Its database is stored in
-`dev.db`; there is no hosted database.
+The deployed application uses Cloudflare D1 through Drizzle. Local development
+uses Cloudflare's local D1 emulator, so the same database behavior is exercised
+without touching production data. The earlier `dev.db` file is retained only as
+a legacy backup.
+
+Recipe photos are stored in R2 rather than inside D1. D1 stores the photo object
+key and MIME type alongside the recipe.
 
 Recipe instructions are stored as Markdown. Ingredient references use readable
 tokens such as `[[Butter]]`, and related usage records are generated when a

@@ -16,14 +16,17 @@ Backend
 
 Database
 
-- SQLite
-- Prisma ORM
+- Cloudflare D1 (SQLite semantics)
+- Drizzle ORM
 
-Authentication
+File storage
 
-None initially.
+- Cloudflare R2 for recipe photos
 
-Access is controlled through Tailscale.
+Authentication and access
+
+- Owner-only access is enforced by the hosting platform.
+- The application does not maintain a separate password database.
 
 ---
 
@@ -44,8 +47,10 @@ Access is controlled through Tailscale.
 - `lib/recipe/` — recipe queries, mutations, scaling, and slugs
 - `lib/markdown/` — Markdown rendering and ingredient-reference tokens
 - `lib/validation/` — recipe form validation
-- `lib/db/` — Prisma client
-- `prisma/` — schema and seed data
+- `lib/db/` — request-scoped D1 client
+- `lib/storage/` — recipe photo storage
+- `db/` and `drizzle/` — hosted database schema and migrations
+- `prisma/` — legacy local database migration history
 - `docs/` — product and technical documentation
 
 ---
@@ -63,6 +68,7 @@ Major entities include:
 - Tag
 - RecipeTag
 
-Photos remain a planned feature and are not yet in the Prisma schema.
+Recipe photo metadata is stored with the recipe. The image bytes are stored in
+R2.
 
 Relationships will be documented as the schema evolves.

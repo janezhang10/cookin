@@ -120,21 +120,13 @@ Users should eventually be able to search by:
 
 Primary deployment target:
 
-Home server connected through Tailscale.
-
-The initial deployment will use Tailscale Serve and its private `.ts.net` HTTPS
-address. Tailscale identity will gate access before traffic reaches the
-application, so a shared application password and custom domain are not needed.
-The first deployment will retain SQLite and database-backed photos to avoid an
-unnecessary data migration.
+Private managed hosting through OpenAI Sites on Cloudflare infrastructure.
 
 The hosted application must remain private while being available from personal
-devices. The application will listen only on localhost and will be reachable
-through Tailscale Serve, not Tailscale Funnel. Hosting work includes private
-HTTPS, authorization on every page and mutation, automated SQLite backups,
-restore testing, and deployment documentation. A managed database, object
-storage, and application-level sign-in remain fallback options if Cookin later
-moves to a public cloud host.
+devices. The hosting platform will gate the entire site to its owner. Recipes
+will use D1, photos will use R2, and the included hosted address will avoid the
+need to purchase a domain. Hosting work includes migrations, private access,
+backups, restore testing, and deployment documentation.
 
 ---
 

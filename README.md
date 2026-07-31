@@ -25,7 +25,9 @@ making recipes easy to read, edit, search, and follow while cooking.
 - Run a timer while moving between cooking steps
 - Convert common cooking weight and volume units
 - Confirm before discarding edits or deleting a recipe
-- Local SQLite storage
+- Hosted recipe storage shared across devices
+- Separate hosted photo storage
+- Owner-only private access
 
 ## Run Locally
 
@@ -36,8 +38,12 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Recipe data is saved in
-the local `dev.db` file.
+Open [http://localhost:3000](http://localhost:3000). The development command
+applies pending migrations to a local Cloudflare database emulator before
+starting Next.js.
+
+The previous `dev.db` file is retained as a legacy backup, but the application
+no longer reads or writes it.
 
 ## Documentation
 

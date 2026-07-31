@@ -1,24 +1,17 @@
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { drizzle } from "drizzle-orm/d1";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { connection } from "next/server";
+import { cache } from "react";
 
-import { PrismaClient } from "@/app/generated/prisma/client";
+export const getDb = cache(async () => {
+  await connection();
+  const database = getCloudflareContext().env.DB;
 
-const globalForPrisma = globalThis as {
-  prisma?: PrismaClient;
-};
+  if (!database) {
+    throw new Error("Cloudflare D1 binding `DB` is not configured.");
+  }
 
-const databaseUrl = process.env.DATABASE_URL;
+  return drizzle(database);
+});
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not configured.");
-}
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    adapter: new PrismaBetterSqlite3({ url: databaseUrl }),
-    log: ["error", "warn"],
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+export type CookinDb = Awaited<ReturnType<typeof getDb>>;

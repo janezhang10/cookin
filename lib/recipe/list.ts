@@ -1,41 +1,22 @@
-import { prisma } from "@/lib/db/client";
+import { asc } from "drizzle-orm";
+
+import { recipes } from "@/db/schema";
+import { getDb } from "@/lib/db/client";
+
+import { getRecipeIngredients, getRecipeTags } from "./get";
 
 export async function listRecipes() {
-  return prisma.recipe.findMany({
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      isFavorite: true,
-      photoMimeType: true,
-      tags: {
-        select: {
-          tag: {
-            select: {
-              name: true,
-              normalizedName: true,
-            },
-          },
-        },
-        orderBy: {
-          displayOrder: "asc",
-        },
-      },
-      ingredients: {
-        select: {
-          ingredient: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          displayOrder: "asc",
-        },
-      },
-    },
-    orderBy: {
-      title: "asc",
-    },
-  });
+  const db = await getDb();
+  const recipeRows = await db
+    .select()
+    .from(recipes)
+    .orderBy(asc(recipes.title));
+
+  return Promise.all(
+    recipeRows.map(async (recipe) => ({
+      ...recipe,
+      tags: await getRecipeTags(db, recipe.id),
+      ingredients: await getRecipeIngredients(db, recipe.id),
+    })),
+  );
 }
