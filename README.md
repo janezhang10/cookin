@@ -50,3 +50,5 @@ no longer reads or writes it.
 See `docs/` for the project specification, architecture, schema, and roadmap.
 The private deployment recommendation is in `docs/HOSTING.md`.
 
+## Deploy
+Run `npm run deploy`
