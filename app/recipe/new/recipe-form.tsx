@@ -466,16 +466,6 @@ export function RecipeForm({
             <h2 id="ingredients-heading">Ingredients</h2>
             <p>Quantity and unit are optional.</p>
           </div>
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => {
-              const id = nextIngredientId.current++;
-              setIngredients((rows) => [...rows, emptyIngredient(id)]);
-            }}
-          >
-            + Add ingredient
-          </button>
         </div>
 
         <div className="ingredient-header" aria-hidden="true">
@@ -552,6 +542,19 @@ export function RecipeForm({
             </div>
           ))}
         </div>
+
+        <div className="section-footer">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={() => {
+              const id = nextIngredientId.current++;
+              setIngredients((rows) => [...rows, emptyIngredient(id)]);
+            }}
+          >
+            + Add ingredient
+          </button>
+        </div>
       </section>
 
       <section className="form-section" aria-labelledby="steps-heading">
@@ -560,16 +563,6 @@ export function RecipeForm({
             <h2 id="steps-heading">Instructions</h2>
             <p>Keep each instruction in its own step. Markdown is supported.</p>
           </div>
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => {
-              const id = nextStepId.current++;
-              setSteps((rows) => [...rows, emptyStep(id)]);
-            }}
-          >
-            + Add step
-          </button>
         </div>
 
         <ol className="step-rows">
@@ -620,6 +613,19 @@ export function RecipeForm({
             </li>
           ))}
         </ol>
+
+        <div className="section-footer">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={() => {
+              const id = nextStepId.current++;
+              setSteps((rows) => [...rows, emptyStep(id)]);
+            }}
+          >
+            + Add step
+          </button>
+        </div>
       </section>
 
       <section className="form-section" aria-labelledby="converter-heading">

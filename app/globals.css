@@ -872,6 +872,11 @@ a {
   font-size: 0.9rem;
 }
 
+.section-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .secondary-button,
 .text-button,
 .remove-button {
