@@ -342,6 +342,18 @@ export function RecipeForm({
     });
   }
 
+  const saveButton = (
+    <button className="button" type="submit" disabled={pending}>
+      {pending
+        ? initialRecipe
+          ? "Saving…"
+          : "Creating…"
+        : initialRecipe
+          ? "Save changes"
+          : "Create recipe"}
+    </button>
+  );
+
   return (
     <form
       action={formAction}
@@ -350,6 +362,8 @@ export function RecipeForm({
         allowNavigation.current = true;
       }}
     >
+      <div className="form-actions">{saveButton}</div>
+
       <div className="form-field">
         <label htmlFor="title">Title</label>
         <input
@@ -673,15 +687,7 @@ export function RecipeForm({
         >
           Cancel
         </Link>
-        <button className="button" type="submit" disabled={pending}>
-          {pending
-            ? initialRecipe
-              ? "Saving…"
-              : "Creating…"
-            : initialRecipe
-              ? "Save changes"
-              : "Create recipe"}
-        </button>
+        {saveButton}
       </div>
 
       <ConfirmationDialog
