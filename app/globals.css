@@ -1302,6 +1302,12 @@ a {
   gap: 1rem;
 }
 
+.scale-controls {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: end;
+}
+
 .scale-control {
   display: flex;
   align-items: center;
@@ -1309,6 +1315,11 @@ a {
   color: var(--muted);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.scale-label {
+  min-width: 4.75rem;
+  text-align: right;
 }
 
 .scale-options {
@@ -1345,6 +1356,34 @@ a {
 }
 
 .scale-option:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.scale-custom {
+  width: 3.75rem;
+  height: 30px;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 7px;
+  background: var(--subtle);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.scale-custom::placeholder {
+  color: var(--muted);
+}
+
+.scale-custom.is-custom {
+  background: var(--accent-soft);
+  color: var(--accent-soft-text);
+}
+
+.scale-custom:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }

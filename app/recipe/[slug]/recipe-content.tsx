@@ -20,7 +20,85 @@ interface RecipeStep {
   markdown: string;
 }
 
-const DIVISORS = [1, 2, 3, 4] as const;
+const SCALE_PRESETS = [1, 2, 3, 4] as const;
+
+function ScaleRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const isCustom = !(SCALE_PRESETS as readonly number[]).includes(value);
+
+  function commitDraft() {
+    if (draft === null) {
+      return;
+    }
+    const trimmed = draft.trim();
+    if (/^\d+(\.\d+)?$/.test(trimmed) || /^\.\d+$/.test(trimmed)) {
+      const parsed = parseFloat(trimmed);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        onChange(parsed);
+      }
+    }
+    setDraft(null);
+  }
+
+  return (
+    <div className="scale-control">
+      <span className="scale-label">{label}</span>
+      <div className="scale-options" role="group" aria-label={label}>
+        {SCALE_PRESETS.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className="scale-option"
+            aria-pressed={value === option}
+            onClick={() => onChange(option)}
+          >
+            {option}
+          </button>
+        ))}
+        <input
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          className={`scale-custom${isCustom ? " is-custom" : ""}`}
+          aria-label={`${label} (custom value)`}
+          title="Type a custom value, then press Enter"
+          value={draft ?? String(value)}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={commitDraft}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.currentTarget.blur();
+            } else if (event.key === "Escape") {
+              setDraft(null);
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function describeScale(multiplier: number, divisor: number): string {
+  if (multiplier === 1 && divisor === 1) {
+    return "Showing original ingredient quantities.";
+  }
+  const parts: string[] = [];
+  if (multiplier !== 1) {
+    parts.push(`multiplied by ${multiplier}`);
+  }
+  if (divisor !== 1) {
+    parts.push(`divided by ${divisor}`);
+  }
+  return `Ingredient quantities ${parts.join(" and ")}.`;
+}
 
 function IngredientChecklist({
   ingredients,
@@ -92,6 +170,8 @@ export function RecipeContent({
   steps: RecipeStep[];
 }) {
   const [divisor, setDivisor] = useState<number>(1);
+  const [multiplier, setMultiplier] = useState<number>(1);
+  const effectiveDivisor = divisor / multiplier;
   const [checkedIngredientIds, setCheckedIngredientIds] = useState<Set<string>>(
     () => new Set(),
   );
@@ -182,33 +262,23 @@ export function RecipeContent({
         <div className="recipe-panel-heading">
           <h2>Ingredients</h2>
 
-          <div className="scale-control">
-            <span>Divide by</span>
-            <div className="scale-options" role="group" aria-label="Divide by">
-              {DIVISORS.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className="scale-option"
-                  aria-pressed={divisor === option}
-                  onClick={() => setDivisor(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+          <div className="scale-controls">
+            <ScaleRow
+              label="Multiply by"
+              value={multiplier}
+              onChange={setMultiplier}
+            />
+            <ScaleRow label="Divide by" value={divisor} onChange={setDivisor} />
           </div>
         </div>
 
         <p className="sr-only" aria-live="polite">
-          {divisor === 1
-            ? "Showing original ingredient quantities."
-            : `Ingredient quantities divided by ${divisor}.`}
+          {describeScale(multiplier, divisor)}
         </p>
 
         <IngredientChecklist
           ingredients={ingredients}
-          divisor={divisor}
+          divisor={effectiveDivisor}
           checkedIngredientIds={checkedIngredientIds}
           onToggle={toggleIngredient}
           onClear={() => setCheckedIngredientIds(new Set())}
@@ -234,7 +304,7 @@ export function RecipeContent({
               <RecipeMarkdown
                 markdown={step.markdown}
                 ingredients={ingredients}
-                divisor={divisor}
+                divisor={effectiveDivisor}
               />
             </li>
           ))}
@@ -284,7 +354,7 @@ export function RecipeContent({
               <RecipeMarkdown
                 markdown={currentStep.markdown}
                 ingredients={ingredients}
-                divisor={divisor}
+                divisor={effectiveDivisor}
               />
             </section>
 
@@ -297,7 +367,7 @@ export function RecipeContent({
               </summary>
               <IngredientChecklist
                 ingredients={ingredients}
-                divisor={divisor}
+                divisor={effectiveDivisor}
                 checkedIngredientIds={checkedIngredientIds}
                 onToggle={toggleIngredient}
                 onClear={() => setCheckedIngredientIds(new Set())}
