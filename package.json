@@ -7,9 +7,9 @@
     "dev:next": "next dev",
     "build": "next build",
     "build:sites": "opennextjs-cloudflare build && node scripts/prepare-sites-build.mjs",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "preview": "npm run db:local:migrate && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "db:generate": "drizzle-kit generate",
-    "db:local:migrate": "cross-env XDG_CONFIG_HOME=.wrangler/config wrangler d1 migrations apply cookin-local --local",
+    "db:local:migrate": "cross-env XDG_CONFIG_HOME=.wrangler/config wrangler d1 migrations apply DB --local",
     "cf-typegen": "cross-env XDG_CONFIG_HOME=.wrangler/config wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint"

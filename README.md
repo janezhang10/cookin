@@ -36,6 +36,10 @@ Install dependencies and start the development server:
 ```bash
 npm install
 npm run dev
+
+npx wrangler d1 migrations apply DB --local
+npx @opennextjs/cloudflare build 
+npx @opennextjs/cloudflare preview
 ```
 
 Open [http://localhost:3000](http://localhost:3000). The development command
