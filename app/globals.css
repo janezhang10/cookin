@@ -896,7 +896,7 @@ a {
 .ingredient-header,
 .ingredient-row {
   display: grid;
-  grid-template-columns: 100px 180px minmax(0, 1fr) 36px;
+  grid-template-columns: 28px 100px 180px minmax(0, 1fr) 28px 36px;
   gap: 0.75rem;
   align-items: center;
 }
@@ -936,6 +936,76 @@ a {
   opacity: 0.25;
 }
 
+.drag-handle {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: grab;
+  font-size: 0.95rem;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drag-handle:hover {
+  background: var(--subtle);
+  color: var(--text);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.reorder-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.reorder-button {
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.reorder-button:hover:not(:disabled) {
+  background: var(--subtle);
+  color: var(--text);
+}
+
+.reorder-button:disabled {
+  cursor: default;
+  opacity: 0.25;
+}
+
+.ingredient-row.drop-before,
+.step-rows li.drop-before {
+  box-shadow: 0 -2px 0 0 var(--accent);
+}
+
+.ingredient-row.drop-after,
+.step-rows li.drop-after {
+  box-shadow: 0 2px 0 0 var(--accent);
+}
+
+.ingredient-row.is-dragging,
+.step-rows li.is-dragging {
+  opacity: 0.4;
+}
+
 .step-rows {
   padding: 0;
   margin: 0;
@@ -944,13 +1014,13 @@ a {
 
 .step-rows li {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  grid-template-columns: 28px 36px minmax(0, 1fr) 28px 36px;
   gap: 0.75rem;
   align-items: start;
 }
 
 .ingredient-reference-picker {
-  grid-column: 2 / 3;
+  grid-column: 3 / 4;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -1830,15 +1900,25 @@ a {
   }
 
   .ingredient-row {
-    grid-template-columns: 90px minmax(0, 1fr) 36px;
+    grid-template-columns: 28px 90px minmax(0, 1fr) 28px 36px;
   }
 
   .ingredient-row input:last-of-type {
-    grid-column: 1 / 3;
+    grid-column: 2 / 4;
+  }
+
+  .ingredient-row .drag-handle {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .ingredient-row .reorder-buttons {
+    grid-column: 4;
+    grid-row: 1 / 3;
   }
 
   .ingredient-row .remove-button {
-    grid-column: 3;
+    grid-column: 5;
     grid-row: 1 / 3;
   }
 
