@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent,
+} from "react";
 
 import { ConfirmationDialog } from "@/app/confirmation-dialog";
 import { UnitConverter } from "@/app/recipe/unit-converter";
@@ -73,6 +79,110 @@ const emptyStep = (id: number): StepRow => ({
   id,
   text: "",
 });
+
+type ReorderDirection = -1 | 1;
+
+function moveRow<T extends { id: number }>(
+  rows: T[],
+  id: number,
+  direction: ReorderDirection,
+): T[] {
+  const index = rows.findIndex((row) => row.id === id);
+  const target = index + direction;
+
+  if (index === -1 || target < 0 || target >= rows.length) {
+    return rows;
+  }
+
+  const next = [...rows];
+  const [item] = next.splice(index, 1);
+  next.splice(target, 0, item);
+  return next;
+}
+
+function dropRow<T extends { id: number }>(
+  rows: T[],
+  draggedId: number,
+  targetId: number,
+  position: "before" | "after",
+): T[] {
+  if (draggedId === targetId) {
+    return rows;
+  }
+
+  const from = rows.findIndex((row) => row.id === draggedId);
+
+  if (from === -1) {
+    return rows;
+  }
+
+  const next = [...rows];
+  const [item] = next.splice(from, 1);
+  const targetIndex = next.findIndex((row) => row.id === targetId);
+
+  if (targetIndex === -1) {
+    return rows;
+  }
+
+  next.splice(position === "after" ? targetIndex + 1 : targetIndex, 0, item);
+  return next;
+}
+
+function DragHandle({
+  onDragStart,
+  onDragEnd,
+}: {
+  onDragStart: (event: DragEvent<HTMLElement>) => void;
+  onDragEnd: () => void;
+}) {
+  return (
+    <span
+      className="drag-handle"
+      draggable
+      aria-hidden="true"
+      title="Drag to reorder"
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
+      ⋮⋮
+    </span>
+  );
+}
+
+function ReorderButtons({
+  itemLabel,
+  index,
+  count,
+  onMove,
+}: {
+  itemLabel: string;
+  index: number;
+  count: number;
+  onMove: (direction: ReorderDirection) => void;
+}) {
+  return (
+    <div className="reorder-buttons">
+      <button
+        type="button"
+        className="reorder-button"
+        aria-label={`Move ${itemLabel} ${index + 1} up`}
+        disabled={index === 0}
+        onClick={() => onMove(-1)}
+      >
+        ↑
+      </button>
+      <button
+        type="button"
+        className="reorder-button"
+        aria-label={`Move ${itemLabel} ${index + 1} down`}
+        disabled={index === count - 1}
+        onClick={() => onMove(1)}
+      >
+        ↓
+      </button>
+    </div>
+  );
+}
 
 export function RecipeForm({
   units,
@@ -147,6 +257,16 @@ export function RecipeForm({
     ),
   );
   const stepTextareas = useRef<Record<number, HTMLTextAreaElement | null>>({});
+  const dragPayload = useRef<{
+    kind: "ingredient" | "step";
+    id: number;
+  } | null>(null);
+  const [dragInfo, setDragInfo] = useState<{
+    kind: "ingredient" | "step";
+    id: number;
+    targetId: number | null;
+    position: "before" | "after" | null;
+  } | null>(null);
   const recipeAction = initialRecipe
     ? updateRecipeAction.bind(null, initialRecipe.id, initialRecipe.slug)
     : createRecipeAction;
@@ -342,6 +462,102 @@ export function RecipeForm({
     });
   }
 
+  function clearDragState() {
+    dragPayload.current = null;
+    setDragInfo(null);
+  }
+
+  function handleReorderDragStart(kind: "ingredient" | "step", id: number) {
+    return (event: DragEvent<HTMLElement>) => {
+      dragPayload.current = { kind, id };
+      event.dataTransfer.setData("text/plain", `${kind}:${id}`);
+      event.dataTransfer.effectAllowed = "move";
+      const row = event.currentTarget.closest(".ingredient-row, .step-rows li");
+
+      if (row instanceof HTMLElement) {
+        event.dataTransfer.setDragImage(row, 24, 24);
+      }
+
+      setDragInfo({ kind, id, targetId: null, position: null });
+    };
+  }
+
+  function handleReorderDragOver(kind: "ingredient" | "step", targetId: number) {
+    return (event: DragEvent<HTMLElement>) => {
+      const payload = dragPayload.current;
+
+      if (!payload || payload.kind !== kind || payload.id === targetId) {
+        return;
+      }
+
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      const rect = event.currentTarget.getBoundingClientRect();
+      const position =
+        event.clientY <= rect.top + rect.height / 2 ? "before" : "after";
+
+      setDragInfo((current) =>
+        current &&
+        current.kind === kind &&
+        current.id === payload.id &&
+        current.targetId === targetId &&
+        current.position === position
+          ? current
+          : { kind, id: payload.id, targetId, position },
+      );
+    };
+  }
+
+  function handleReorderDrop(kind: "ingredient" | "step", targetId: number) {
+    return (event: DragEvent<HTMLElement>) => {
+      const payload = dragPayload.current;
+
+      if (!payload || payload.kind !== kind) {
+        return;
+      }
+
+      event.preventDefault();
+      const rect = event.currentTarget.getBoundingClientRect();
+      const position =
+        event.clientY <= rect.top + rect.height / 2 ? "before" : "after";
+
+      if (kind === "ingredient") {
+        setIngredients((rows) => dropRow(rows, payload.id, targetId, position));
+      } else {
+        setSteps((rows) => dropRow(rows, payload.id, targetId, position));
+      }
+
+      clearDragState();
+    };
+  }
+
+  function reorderIndicatorClass(
+    kind: "ingredient" | "step",
+    id: number,
+  ): string {
+    if (!dragInfo || dragInfo.kind !== kind) {
+      return "";
+    }
+
+    if (dragInfo.targetId === id) {
+      return dragInfo.position === "before" ? " drop-before" : " drop-after";
+    }
+
+    return dragInfo.id === id ? " is-dragging" : "";
+  }
+
+  const saveButton = (
+    <button className="button" type="submit" disabled={pending}>
+      {pending
+        ? initialRecipe
+          ? "Saving…"
+          : "Creating…"
+        : initialRecipe
+          ? "Save changes"
+          : "Create recipe"}
+    </button>
+  );
+
   return (
     <form
       action={formAction}
@@ -350,6 +566,8 @@ export function RecipeForm({
         allowNavigation.current = true;
       }}
     >
+      <div className="form-actions">{saveButton}</div>
+
       <div className="form-field">
         <label htmlFor="title">Title</label>
         <input
@@ -469,15 +687,26 @@ export function RecipeForm({
         </div>
 
         <div className="ingredient-header" aria-hidden="true">
+          <span />
           <span>Qty</span>
           <span>Unit</span>
           <span>Ingredient</span>
+          <span />
           <span />
         </div>
 
         <div className="ingredient-rows">
           {ingredients.map((row, index) => (
-            <div className="ingredient-row" key={row.id}>
+            <div
+              className={`ingredient-row${reorderIndicatorClass("ingredient", row.id)}`}
+              key={row.id}
+              onDragOver={handleReorderDragOver("ingredient", row.id)}
+              onDrop={handleReorderDrop("ingredient", row.id)}
+            >
+              <DragHandle
+                onDragStart={handleReorderDragStart("ingredient", row.id)}
+                onDragEnd={clearDragState}
+              />
               <label className="sr-only" htmlFor={`quantity-${row.id}`}>
                 Ingredient {index + 1} quantity
               </label>
@@ -526,6 +755,14 @@ export function RecipeForm({
                 }
               />
 
+              <ReorderButtons
+                itemLabel="ingredient"
+                index={index}
+                count={ingredients.length}
+                onMove={(direction) =>
+                  setIngredients((rows) => moveRow(rows, row.id, direction))
+                }
+              />
               <button
                 className="remove-button"
                 type="button"
@@ -567,7 +804,16 @@ export function RecipeForm({
 
         <ol className="step-rows">
           {steps.map((step, index) => (
-            <li key={step.id}>
+            <li
+              key={step.id}
+              className={reorderIndicatorClass("step", step.id) || undefined}
+              onDragOver={handleReorderDragOver("step", step.id)}
+              onDrop={handleReorderDrop("step", step.id)}
+            >
+              <DragHandle
+                onDragStart={handleReorderDragStart("step", step.id)}
+                onDragEnd={clearDragState}
+              />
               <span className="step-number">{index + 1}</span>
               <label className="sr-only" htmlFor={`step-${step.id}`}>
                 Instruction {index + 1}
@@ -582,6 +828,14 @@ export function RecipeForm({
                 placeholder="Heat the pan, then add..."
                 aria-required="true"
                 onChange={(event) => updateStep(step.id, event.target.value)}
+              />
+              <ReorderButtons
+                itemLabel="instruction"
+                index={index}
+                count={steps.length}
+                onMove={(direction) =>
+                  setSteps((rows) => moveRow(rows, step.id, direction))
+                }
               />
               <button
                 className="remove-button"
@@ -673,15 +927,7 @@ export function RecipeForm({
         >
           Cancel
         </Link>
-        <button className="button" type="submit" disabled={pending}>
-          {pending
-            ? initialRecipe
-              ? "Saving…"
-              : "Creating…"
-            : initialRecipe
-              ? "Save changes"
-              : "Create recipe"}
-        </button>
+        {saveButton}
       </div>
 
       <ConfirmationDialog
