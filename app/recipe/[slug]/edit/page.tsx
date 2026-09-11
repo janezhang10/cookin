@@ -25,12 +25,10 @@ export default async function EditRecipePage({
       <Link href={`/recipe/${recipe.slug}`} className="back-link">
         ← Back to recipe
       </Link>
-      <header className="page-header">
-        <h1>Edit recipe</h1>
-        <p>Update the ingredients or instructions, then save your changes.</p>
-      </header>
       <RecipeForm
         units={units}
+        heading="Edit recipe"
+        subheading="Update the ingredients or instructions, then save your changes."
         initialRecipe={{
           id: recipe.id,
           slug: recipe.slug,

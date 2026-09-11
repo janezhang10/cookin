@@ -186,10 +186,14 @@ function ReorderButtons({
 
 export function RecipeForm({
   units,
+  heading,
+  subheading,
   initialRecipe,
   draftRecipe,
 }: {
   units: UnitOption[];
+  heading?: string;
+  subheading?: string;
   initialRecipe?: RecipeFormInitialData;
   draftRecipe?: RecipeFormDraftData;
 }) {
@@ -566,7 +570,17 @@ export function RecipeForm({
         allowNavigation.current = true;
       }}
     >
-      <div className="form-actions">{saveButton}</div>
+      {heading ? (
+        <div className="form-header">
+          <div>
+            <h1>{heading}</h1>
+            {subheading ? <p>{subheading}</p> : null}
+          </div>
+          {saveButton}
+        </div>
+      ) : (
+        <div className="form-actions">{saveButton}</div>
+      )}
 
       <div className="form-field">
         <label htmlFor="title">Title</label>
