@@ -872,6 +872,24 @@ a {
   font-size: 0.9rem;
 }
 
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.form-header h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 7vw, 3.5rem);
+}
+
+.form-header p {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+}
+
 .section-footer {
   display: flex;
   justify-content: flex-start;

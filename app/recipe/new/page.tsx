@@ -11,11 +11,11 @@ export default async function NewRecipePage() {
       <Link href="/" className="back-link">
         ← All recipes
       </Link>
-      <header className="page-header">
-        <h1>Create recipe</h1>
-        <p>Add only what you need to cook it.</p>
-      </header>
-      <RecipeForm units={units} />
+      <RecipeForm
+        units={units}
+        heading="Create recipe"
+        subheading="Add only what you need to cook it."
+      />
     </main>
   );
 }
