@@ -309,6 +309,8 @@ export function RecipeContent({
             </li>
           ))}
         </ol>
+
+        <CookingTimer />
       </section>
 
       <section className="recipe-panel">

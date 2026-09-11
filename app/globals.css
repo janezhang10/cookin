@@ -1388,6 +1388,10 @@ a {
   font-size: 0.9rem;
 }
 
+.recipe-panel .cooking-timer {
+  margin-top: 1.25rem;
+}
+
 .recipe-panel-heading {
   display: flex;
   align-items: center;
